@@ -1,0 +1,1463 @@
+/* =========================================================
+   ROOT VARIABLES (цветове и theme)
+   ========================================================= */
+
+:root {
+    --primary: #d4af37;
+    /* основен златен цвят */
+    --primary-dark: #b8962e;
+    /* по-тъмен вариант */
+    --success: #22c55e;
+    /* зелен (успех) */
+
+    --text: #f8fafc;
+    /* основен текст */
+    --muted: #94a3b8;
+    /* secondary текст */
+    --border: rgba(255, 255, 255, 0.1);
+    /* граници */
+}
+
+
+/* =========================================================
+   GLOBAL RESET & FONTS
+   ========================================================= */
+
+.focus-highlight {
+    animation: pulse 1s ease;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+}
+
+* {
+    box-sizing: border-box;
+    /* правилно оразмеряване */
+}
+
+html,
+body {
+    overflow-x: hidden;
+    /* маха horizontal scroll */
+}
+
+html {
+    scroll-behavior: smooth;
+    /* smooth scroll */
+}
+
+/* heading fonts */
+h1,
+h2 {
+    font-family: 'Playfair Display', serif;
+}
+
+/* body fonts */
+body,
+p,
+input,
+button {
+    font-family: 'Inter', sans-serif;
+}
+
+/* typography */
+h2 {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 20px;
+}
+
+p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#date {
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   BODY & BACKGROUND
+   ========================================================= */
+
+body {
+    background: url('/static/background/barber.png') center/cover no-repeat fixed;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+}
+
+/* dark overlay */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+}
+
+
+/* =========================================================
+   LAYOUT / CONTAINER
+   ========================================================= */
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding-top: 20px;
+    animation: fadeIn 0.6s ease;
+}
+
+.container h1 {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    color: var(--primary);
+}
+
+/* fade animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+
+    padding: 20px;
+    background: transparent;
+    backdrop-filter: blur(6px);
+}
+
+/* navbar layout */
+.nav-container {
+    max-width: 1200px;
+    margin: auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 20px;
+}
+
+/* default link + logo color */
+.navbar a,
+.logo span {
+    color: white;
+    font-weight: 500;
+}
+
+
+/* ================= LOGO ================= */
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 999px;
+}
+
+.logo span {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    /* gradient текст */
+    background: linear-gradient(135deg, #d4af37, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* ================= NAV LINKS ================= */
+
+.nav-right a {
+    margin-left: 25px;
+    text-decoration: none;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    padding: 6px 10px;
+    border-radius: 8px;
+
+    transition: all 0.25s ease;
+}
+
+/* hover */
+.nav-right a:hover {
+    color: var(--primary);
+    background: rgba(212, 175, 55, 0.08);
+}
+
+/* active */
+.nav-right a.active {
+    color: black;
+    background: var(--primary);
+    font-weight: 600;
+}
+
+/* navbar scroll state */
+.navbar.scrolled {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.hero {
+    position: relative;
+    height: 100vh;
+    margin-bottom: 40px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* video background */
+.hero-video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    z-index: 0;
+}
+
+/* overlay content */
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+
+    text-align: center;
+    color: white;
+
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* dark overlay */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* hero title */
+.hero h1 {
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    background: linear-gradient(135deg, #d4af37, #fff, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* subtitle */
+.hero p {
+    font-size: clamp(16px, 2vw, 22px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    opacity: 0.9;
+    color: #f1f5f9;
+
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+}
+
+/* emoji icon */
+.hero .icon {
+    font-size: clamp(36px, 5vw, 60px);
+    margin-right: 10px;
+
+    -webkit-text-fill-color: initial;
+    background: none;
+
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.6));
+}
+
+
+/* =========================================================
+   BARBER CARDS
+   ========================================================= */
+
+.barbers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+/* card */
+.barber-card {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    cursor: pointer;
+}
+
+/* image */
+.barber-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    object-position: center top;
+}
+
+/* hover */
+.barber-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.25);
+}
+
+/* active */
+.barber-card.active {
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+    transform: scale(1.05);
+}
+
+/* name */
+.barber-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* role */
+.barber-role {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   BOOKING SECTION
+   ========================================================= */
+#bookingSection {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    overflow-x: hidden;
+}
+
+/* disabled state */
+#bookingSection.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+}
+
+
+/* =========================================================
+   FORMS / INPUTS
+   ========================================================= */
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+
+    border-radius: 12px;
+    border: 1px solid var(--border);
+
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+button.main-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+
+    border-radius: 14px;
+    border: none;
+
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: black;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SLOTS
+   ========================================================= */
+
+.slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.slot {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+.slot.active {
+    background: var(--primary);
+    color: black;
+}
+
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+
+.contact {
+    margin-top: 50px;
+    padding: 30px;
+
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+/* =========================================================
+   MODAL (успешна резервация)
+   ========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+
+    z-index: 99999;
+    /* 🔥 за да е най-отгоре */
+}
+
+/* съдържание на модала */
+.modal-content {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+
+    transform: scale(1);
+    transition: 0.25s;
+}
+
+/* скрит модал */
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* анимация при скриване */
+.modal.hidden .modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+}
+
+
+/* =========================================================
+   BOOKING LOCK (overlay преди избор на бръснар)
+   ========================================================= */
+
+.booking-lock {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 18px;
+
+    font-size: 16px;
+    color: white;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   SERVICES (картички за услуги)
+   ========================================================= */
+
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    /* да не се чупи */
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.service-card {
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+
+    text-align: center;
+    cursor: pointer;
+}
+
+/* hover */
+.service-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+}
+
+/* active */
+.service-card.active {
+    background: var(--primary);
+    color: black;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FLATPICKR (calendar стил)
+   ========================================================= */
+
+.flatpickr-calendar {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+}
+
+.flatpickr-day {
+    border-radius: 8px;
+    color: white !important;
+}
+
+.flatpickr-current-month {
+    color: white !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    fill: white !important;
+}
+
+.flatpickr-weekday {
+    color: var(--muted) !important;
+}
+
+/* selected */
+.flatpickr-day.selected {
+    background: var(--primary) !important;
+    color: black !important;
+}
+
+.flatpickr-day.today {
+    border: 1px solid var(--primary);
+}
+
+.flatpickr-day:hover {
+    background: rgba(212, 175, 55, 0.25);
+    transform: scale(1.05);
+}
+
+.flatpickr-months {
+    color: white;
+}
+
+.flatpickr-input,
+.flatpickr-alt-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* iOS safe fix */
+@media (hover: none) and (pointer: coarse) {
+    .flatpickr-calendar {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 90% !important;
+        max-width: 340px;
+    }
+}
+
+
+
+@supports (-webkit-touch-callout: none) {
+    .flatpickr-calendar {
+        backdrop-filter: none !important;
+    }
+}
+
+
+
+
+.calendar-slot {
+    position: relative;
+}
+
+
+
+.booking {
+    position: relative;
+}
+
+.booking .actions {
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.booking:hover .actions {
+    opacity: 1;
+}
+
+.booking .delete {
+    background: rgba(239, 68, 68, 0.8);
+    color: white;
+    padding: 4px 6px;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* контейнер */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* икони */
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    font-size: 18px;
+
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+
+    border-radius: 50%;
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(10px);
+
+    transition: all 0.3s ease;
+}
+
+/* hover */
+.social-links a:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* brand colors */
+.social-links a:nth-child(1):hover {
+    background: #1877f2;
+}
+
+.social-links a:nth-child(2):hover {
+    background: #e4405f;
+}
+
+.social-links a:nth-child(3):hover {
+    background: #000;
+}
+
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+/* =========================================================
+   PRICING V2 (BARBERSHOP STYLE)
+   ========================================================= */
+
+.pricing-section {
+    background-size: cover;
+    background-position: center;
+    padding: 100px 20px;
+
+    position: relative;
+}
+
+.pricing-overlay {
+    max-width: 900px;
+    margin: auto;
+    color: white;
+}
+
+/* заглавие */
+.pricing-overlay h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #d4af37;
+}
+
+/* редове */
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pricing-container {
+    max-width: 1000px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* CARD */
+.pricing-card {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    transition: 0.3s;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+}
+
+/* HEADER */
+.pricing-header {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.pricing-header.red {
+    background: linear-gradient(90deg, #800000, #c40000);
+}
+
+.pricing-header.blue {
+    background: linear-gradient(90deg, #123, #1e4d7a);
+}
+
+/* LIST */
+.pricing-list {
+    padding: 20px;
+}
+
+/* ITEM */
+.item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ddd;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.item span:last-child {
+    color: #f5d27a;
+    font-weight: bold;
+}
+
+/* RESPONSIVE */
+/* =========================================================
+   ABOUT SECTION
+   ========================================================= */
+
+.about-section {
+    padding: 120px 20px;
+    /* повече въздух */
+    position: relative;
+}
+
+.about-container {
+    max-width: 1000px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.about-container.single {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+}
+
+.about-intro {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+
+.about-highlight {
+    margin-top: 20px;
+    padding: 15px;
+
+    border-left: 3px solid var(--primary);
+
+    background: rgba(255, 255, 255, 0.03);
+
+    font-style: italic;
+    color: #f1f5f9;
+}
+
+.about-features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.about-features div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 14px;
+    border-radius: 10px;
+
+    border: 1px solid var(--border);
+
+    transition: 0.3s;
+}
+
+.about-features div:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+}
+
+/* LIST */
+.about-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.about-list li {
+    margin-bottom: 10px;
+    color: #e2e8f0;
+}
+
+/* STATS */
+.about-stats {
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.about-stats div {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-weight: 600;
+}
+
+/* ================= ANIMATIONS ================= */
+
+
+/* delays */
+.delay-1 {
+    transition-delay: 0.2s;
+}
+
+.delay-2 {
+    transition-delay: 0.4s;
+}
+
+/* текст */
+.about-text {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 50px 40px;
+    border-radius: 24px;
+    margin-bottom: 18px;
+
+    border: 1px solid rgba(212, 175, 55, 0.15);
+
+    backdrop-filter: blur(12px);
+
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+    position: relative;
+}
+
+.about-text::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 80px;
+    height: 3px;
+
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+
+    border-radius: 10px;
+}
+
+.about-text h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+.about-text p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #e2e8f0;
+}
+
+
+.animate {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    filter: blur(6px);
+    transition: all 0.7s ease;
+}
+
+.animate.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+/* COUNTER STYLE */
+.counter {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 20px;
+    display: inline-block;
+    transition: 0.2s;
+}
+
+/* 🔥 POP EFFECT */
+.counter-pop {
+    transform: scale(1.25);
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+}
+
+/* STATS HOVER (много важно) */
+.about-stats div {
+    transition: 0.3s;
+}
+
+.about-stats div:hover {
+    transform: translateY(-4px) scale(1.05);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.25);
+}
+
+.logo {
+    cursor: pointer;
+}
+
+
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .about-container {
+        grid-template-columns: 1fr;
+    }
+
+    .about-text {
+        padding: 20px;
+    }
+}
+
+/* =========================================================
+   MOBILE APP OPTIMIZATION (НЕ ПИПА DESKTOP)
+   ========================================================= */
+
+
+
+/* ================= NAVBAR ================= */
+@media (max-width: 768px) {
+
+    .navbar {
+        position: fixed;
+        padding: 10px 12px;
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .nav-container {
+        display: flex;
+        flex-direction: column;
+        /* 🔥 лого горе, меню долу */
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* LOGO CENTER */
+    .nav-left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* MENU LINE */
+    .nav-right {
+        display: flex;
+        justify-content: space-between;
+        /* 🔥 равномерно */
+        width: 100%;
+        gap: 4px;
+    }
+
+    .nav-right a {
+        flex: 1;
+        /* 🔥 всички заемат равно място */
+        text-align: center;
+
+        font-size: 10px;
+        padding: 6px 2px;
+
+        margin: 0;
+        border-radius: 6px;
+
+        white-space: nowrap;
+    }
+
+
+    /* ================= SPACING ================= */
+    .container {
+        padding: 80px 15px 20px;
+    }
+
+    /* ================= HERO ================= */
+    .hero {
+        height: 70vh;
+        padding: 0 15px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    /* ================= BARBERS ================= */
+    .barbers {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .barber-card {
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    .barber-name {
+        font-size: 16px;
+    }
+
+    .barber-role {
+        font-size: 11px;
+    }
+
+    /* ================= BOOKING ================= */
+    #bookingSection {
+        padding: 15px;
+    }
+
+    /* ================= INPUTS ================= */
+    input,
+    select {
+        font-size: 16px;
+        /* iOS zoom fix */
+        padding: 14px;
+    }
+
+    /* ================= BUTTON ================= */
+    button.main-btn {
+        padding: 16px;
+        font-size: 16px;
+        border-radius: 16px;
+    }
+
+    /* ================= SLOTS ================= */
+    .slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .slot {
+        padding: 12px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    /* ================= CONTACT ================= */
+    .contact {
+        padding: 20px;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* ================= SOCIAL ================= */
+    .social-links a {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* ================= PRICING ================= */
+    .pricing-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* ================= MODAL ================= */
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
+
+    /* ================= SAFE AREA ================= */
+    body {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* ================= TOUCH UX ================= */
+    button,
+    .service-card,
+    .slot,
+    .barber-card {
+        min-height: 44px;
+        transition: all 0.2s ease;
+    }
+
+
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* 🔥 НАЙ-ВАЖНОТО */
+    .item span:first-child {
+        flex: 1;
+        min-width: 0;
+        /* ❗ позволява shrink */
+        white-space: normal;
+    }
+
+    .item span:last-child {
+        flex-shrink: 0;
+        /* цената никога не се свива */
+        white-space: nowrap;
+        font-weight: bold;
+        color: #f5d27a;
+    }
+}
+
+.consent-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* скриваме default checkbox */
+.consent-wrapper input[type="checkbox"] {
+    display: none;
+}
+
+/* custom checkbox */
+.consent-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* hover */
+.consent-box:hover {
+    border-color: var(--primary);
+}
+
+/* checked */
+.consent-wrapper input:checked+.consent-box {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+/* check icon */
+.consent-box::after {
+    content: "✔";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: black;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.consent-wrapper input:checked+.consent-box::after {
+    opacity: 1;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+    padding: 14px 18px;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: white;
+
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.3s;
+
+    z-index: 999999;
+}
+
+/* show */
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* success */
+.toast.success {
+    border-left: 4px solid var(--success);
+}
+
+/* error */
+.toast.error {
+    border-left: 4px solid #ef4444;
+}
+
+/* текст до чекбокса */
+.consent-text {
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+/* линк */
+.consent-text a {
+    color: var(--primary);
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.consent-text a:hover {
+    text-decoration: underline;
+}
+
+.modal-content.error {
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+}
+
+.modal-content.error h2 {
+    color: #ef4444;
+}
+
+.consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    cursor: pointer;
+    padding: 12px;
+    /* 🔥 по-голяма зона */
+    border-radius: 12px;
+
+    transition: 0.2s;
+}
+
+/* tap feedback */
+.consent-label:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.consent-box {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    /* важно */
+}
+
+.consent-text {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.consent-box::after {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.consent-label input:focus+.consent-box {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4);
+}
+
+@media (max-width: 768px) {
+    .consent-label {
+        padding: 14px;
+        gap: 14px;
+    }
+
+    .consent-box {
+        width: 26px;
+        height: 26px;
+    }
+}

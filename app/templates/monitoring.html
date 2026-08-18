@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header__left">
+            <span class="header__mark">📡</span>
+            <div>
+                <div class="header__eyebrow">Live Overview</div>
+                <h1 class="header__title">Мониторинг</h1>
+            </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <a href="/admin" class="btn btn--ghost">Admin панел</a>
+            <button onclick="logout()" class="btn btn--logout">Изход</button>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="section__header">
+            <h2 class="section__title">Резервации днес</h2>
+        </div>
+        <div id="bookingStats" class="barbers-grid"></div>
+    </section>
+
+    <section class="section">
+        <div class="section__header">
+            <h2 class="section__title">SMS (последните 24ч)</h2>
+        </div>
+        <div id="smsStats"></div>
+        <div id="smsFailures" style="margin-top:14px;"></div>
+    </section>
+
+    <section class="section">
+        <div class="section__header">
+            <h2 class="section__title">Email (последните 24ч)</h2>
+        </div>
+        <div id="emailStats"></div>
+        <div id="emailFailures" style="margin-top:14px;"></div>
+    </section>
+
+    <section class="section">
+        <div class="section__header">
+            <h2 class="section__title">Последна активност</h2>
+        </div>
+        <div id="activityLog"></div>
+    </section>
+
+    <script src="/static/scripts/monitoring.js"></script>
+</body>
+
+</html>

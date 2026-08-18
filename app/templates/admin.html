@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y0CVVG8G36');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div class="header__left">
+      <span class="header__mark">✦</span>
+      <div>
+        <div class="header__eyebrow">Admin Console</div>
+        <h1 class="header__title">БръснаряТ</h1>
+      </div>
+      <a href="/admin/monitoring" class="btn btn--ghost btn-monitoring">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+        Мониторинг
+      </a>
+    </div>
+    <button onclick="logout()" class="btn btn--logout">Изход</button>
+  </header>
+
+  <!-- ═══ SCHEDULE ═══ -->
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">График</h2>
+      <div class="date-nav">
+        <button class="btn btn--nav" onclick="changeDay(-1)">&#8592;</button>
+        <div class="date-center">
+          <button onclick="goToday()" class="btn btn--today">Днес</button>
+          <span id="dayLabel" class="day-label"></span>
+          <input type="date" id="adminDate" class="date-input">
+        </div>
+        <button class="btn btn--nav" onclick="changeDay(1)">&#8594;</button>
+      </div>
+    </div>
+    <div id="admin" class="schedule-wrap"></div>
+  </section>
+
+  <!-- ═══ BARBERS LIST ═══ -->
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">Барбери</h2>
+    </div>
+    <div id="barbers" class="barbers-grid"></div>
+  </section>
+
+  <!-- ═══ ADD BARBER ═══ -->
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">Добави барбър</h2>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label class="field__label">Име</label>
+        <input id="name" class="field__input" placeholder="Напр. Иван">
+      </div>
+      <div class="field">
+        <label class="field__label">Username</label>
+        <input id="username" class="field__input" placeholder="ivan_barber">
+      </div>
+      <div class="field">
+        <label class="field__label">Парола</label>
+        <input id="password" type="password" class="field__input" placeholder="••••••">
+      </div>
+      <div class="field">
+        <label class="field__label">Снимка</label>
+        <input type="file" id="imageFile" class="field__input field__input--file">
+      </div>
+    </div>
+
+    <img id="preview" class="img-preview">
+    <button onclick="createBarber()" class="btn btn--primary">Добави барбър</button>
+  </section>
+  <div id="scheduleModal" class="modal hidden">
+    <div class="modal-content" style="max-width:480px; text-align:left; max-height:85vh; overflow-y:auto;">
+      <h2>График — <span id="scheduleBarberName"></span></h2>
+
+      <div class="field" style="margin-top:16px;">
+        <label class="field__label">Работни дни</label>
+        <div class="day-picker" id="schWorkingDaysPicker">
+          <button type="button" class="day-btn" data-day="1">Пон</button>
+          <button type="button" class="day-btn" data-day="2">Вто</button>
+          <button type="button" class="day-btn" data-day="3">Сря</button>
+          <button type="button" class="day-btn" data-day="4">Чет</button>
+          <button type="button" class="day-btn" data-day="5">Пет</button>
+          <button type="button" class="day-btn" data-day="6">Съб</button>
+          <button type="button" class="day-btn" data-day="7">Нед</button>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="field"><label class="field__label">Начало</label><input id="schStart" type="time"
+            class="field__input"></div>
+        <div class="field"><label class="field__label">Край</label><input id="schEnd" type="time" class="field__input">
+        </div>
+      </div>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="schBreakToggle">
+        <span class="toggle-switch"></span>
+        <span>Почивка през деня</span>
+      </label>
+
+      <div class="form-grid toggle-section hidden" id="schBreakFields">
+        <div class="field"><label class="field__label">Почивка от</label><input id="schBreakStart" type="time"
+            class="field__input"></div>
+        <div class="field"><label class="field__label">Почивка до</label><input id="schBreakEnd" type="time"
+            class="field__input"></div>
+      </div>
+
+      <button class="btn btn--primary" onclick="saveBarberSchedule()">Запази график</button>
+
+      <hr style="margin:20px 0; border-color: var(--border);">
+
+      <h3 style="margin-bottom:10px;">Отпуски / болнични</h3>
+      <div id="absenceList"></div>
+
+      <div class="field" style="margin-top:14px;">
+        <label class="field__label">Причина</label>
+        <div class="chip-picker" id="absReasonPicker">
+          <button type="button" class="chip active" data-reason="Отпуск">Отпуск</button>
+          <button type="button" class="chip" data-reason="Болничен">Болничен</button>
+          <button type="button" class="chip" data-reason="Почивен ден">Почивен ден</button>
+          <button type="button" class="chip" data-reason="Друго">Друго</button>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-top:10px;">
+        <div class="field"><label class="field__label">От дата</label><input id="absStart" type="date"
+            class="field__input"></div>
+        <div class="field"><label class="field__label">До дата</label><input id="absEnd" type="date"
+            class="field__input" placeholder="По избор"></div>
+      </div>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="absPartialToggle">
+        <span class="toggle-switch"></span>
+        <span>Само част от деня (по час)</span>
+      </label>
+
+      <div class="form-grid toggle-section hidden" id="absPartialFields">
+        <div class="field"><label class="field__label">От час</label><input id="absFrom" type="time"
+            class="field__input"></div>
+        <div class="field"><label class="field__label">До час</label><input id="absTo" type="time" class="field__input">
+        </div>
+      </div>
+
+      <button class="btn btn--primary" onclick="addBarberAbsence()">Добави отсъствие</button>
+      <button class="btn" style="margin-top:10px;" onclick="closeScheduleModal()">Затвори</button>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">SMS Логове</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input id="smsPhoneFilter" class="field__input" placeholder="Търси по телефон" style="width:160px;">
+        <select id="smsSuccessFilter" class="field__input" style="width:130px;">
+          <option value="">Всички</option>
+          <option value="true">Успешни</option>
+          <option value="false">Неуспешни</option>
+        </select>
+        <button class="btn btn--primary" onclick="loadSmsLogs(1)">Филтрирай</button>
+        <button class="btn btn--logout" onclick="deleteAllSmsLogs()">🗑 Изтрий филтрираните</button>
+      </div>
+    </div>
+    <div id="smsLogs"></div>
+    <div id="smsPagination"
+      style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:14px;"></div>
+  </section>
+
+
+  <script src="/static/scripts/admin.js"></script>
+</body>
+
+</html>

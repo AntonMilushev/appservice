@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# SQLite databases
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Uploaded files
+app/static/uploads/
+
+# Videos
+app/static/videos/*.mp4
+
+# Environment / secrets
+.env

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-Y0CVVG8G36');
+    </script>
+
+    <meta charset="UTF-8">
+    <title>БръснаряТ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="manifest" href="/static/manifest-client.json">
+
+
+    <meta property="og:title" content="БръснаряТ | Запази час онлайн">
+    <meta property="og:description" content="Стил. Класа. Прецизност. Запази час онлайн.">
+
+    <meta property="og:image" content="https://brusnarqt.com/static/preview-fb.jpg?v=20">
+    <meta property="og:image:secure_url" content="https://brusnarqt.com/static/preview-fb.jpg?v=20">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta property="og:url" content="https://brusnarqt.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="bg_BG">
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="nav-container">
+
+            <div class="nav-left">
+                <div class="logo" onclick="goHome()">
+                    <img src="/static/images/barbericon.jpg" alt="logo">
+                    <span>БръснаряТ</span>
+                </div>
+            </div>
+
+            <div class="nav-right">
+                <a href="#" onclick="goHome()">Начало</a>
+                <a href="#about">За нас</a>
+                <a href="#pricing-section">Цени</a>
+                <a href="#" onclick="goToBooking()">Резервация</a>
+                <a href="#contact">Контакти</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="hero">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="{{ url_for('static', filename='videos/barbershopvideo1.mp4') }}" type="video/mp4">
+        </video>
+
+        <div class="hero-overlay">
+            <h1>
+                <span class="icon">💈</span>
+                <span class="title-text">БръснаряТ</span>
+            </h1>
+            <p>Стил. Класа. Прецизност.</p>
+        </div>
+    </div>
+    <section id="about" class="about-section">
+
+        <div class="about-container">
+
+            <div class="about-text animate">
+
+                <h2>💈 За нас</h2>
+
+                <p class="about-intro">
+                    Аз съм бръснар с над 6 години опит зад гърба си – години, изпълнени с постоянство, развитие и любов
+                    към занаята
+                </p>
+
+                <p>
+                    Пътят ми започна в MM Barbershop, където поставих основите на уменията си и изградих своя стил. Днес
+                    вече съм самостоятелен повече от 2 години и продължавам да се развивам с още по-голяма мотивация и
+                    амбиция.
+
+                    На 15 ноември 2024 г. създадох „Бръснарят“ – място, в което влагам сърцето и душата си. За мен това
+                    не е просто работа, а призвание. Всеки ден заставам зад стола с желание да дам най-доброто от себе
+                    си и да надграждам умения
+                </p>
+
+                <p>
+                    Най-голямата ми мотивация е моментът, в който клиентът се погледне в огледалото и се усмихне. Това
+                    усещане – че съм допринесъл някой да се почувства по-уверен, по-красив и по-щастлив – е безценно.
+                    Именно това ме кара да обичам още повече това, което правя.
+
+                    Вярвам, че добрият бръснар никога не спира да се развива. Затова постоянно търся нови техники,
+                    усъвършенствам се и се стремя към съвършенство във всеки детайл. За мен всеки клиент е важен и
+                    заслужава внимание, качество и отношение.
+                </p>
+
+                <div class="about-highlight">
+                    Това е моят път. Това е моят занаят.
+                </div>
+
+            </div>
+
+            <div class="about-features animate delay-1">
+                <div>✔️ Професионални бръснари</div>
+                <div>✔️ Премиум обслужване</div>
+                <div>✔️ Модерен стил</div>
+            </div>
+
+            <div class="about-stats animate delay-2">
+                <div>🔥 <span class="counter" data-target="1000">0</span>+ клиенти</div>
+                <div>⭐ <span class="counter" data-target="5">0</span>.0 рейтинг</div>
+            </div>
+        </div>
+
+    </section>
+
+    <section id="pricing-section" class="pricing-section">
+
+        <div class="pricing-container">
+
+            <!-- MASTER -->
+            <div class="pricing-card">
+                <div class="pricing-header red">
+                    Master Barber
+                </div>
+
+                <div class="pricing-list">
+                    <div class="item">
+                        <span>Мъжко подстригване(Master Barber)</span>
+                        <span>20€</span>
+                    </div>
+                    <div class="item">
+                        <span>Детско подстригване(Master Barber)</span>
+                        <span>15€</span>
+                    </div>
+                    <div class="item">
+                        <span>Баща и син</span>
+                        <span>30€</span>
+                    </div>
+                    <div class="item">
+                        <span>Мъжка подстрижка + оформяне на брада</span>
+                        <span>25€</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SENIOR -->
+            <div class="pricing-card">
+                <div class="pricing-header blue">
+                    Senior Barber
+                </div>
+
+                <div class="pricing-list">
+                    <div class="item">
+                        <span>Мъжко подстригване</span>
+                        <span>18 €</span>
+                    </div>
+                    <div class="item">
+                        <span>Детско подстригване</span>
+                        <span>15 €</span>
+                    </div>
+                    <div class="item">
+                        <span>Баща и син</span>
+                        <span>28€</span>
+                    </div>
+                    <div class="item">
+                        <span>Мъжка подстрижка + оформяне на брада</span>
+                        <span>23€</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="container">
+
+        <div class="barbers" id="barbersSection">
+            {% for b in barbers %}
+            <div class="barber-card" onclick="selectBarber(event, {{b.id}})">
+
+                <img src="{{ b.image if b.image else url_for('static', filename='default.png') }}">
+
+                <p class="barber-name">{{ b.name }}</p>
+
+            </div>
+            {% endfor %}
+        </div>
+        <div id="bookingSection" class="disabled">
+
+            <div class="booking-lock">
+                <p>👆 Избери бръснар, за да продължиш</p>
+            </div>
+
+            <!-- 📅 ДАТА -->
+            <label class="input-label">📅 Дата</label>
+            <input type="date" id="date" placeholder="Избери дата">
+
+            <!-- ✂️ УСЛУГА -->
+            <h3>✂️ Избери услуга</h3>
+            <div class="services">
+                {% for s in services %}
+                <div class="service-card" onclick="selectService(event, {{s.id}})">
+                    <p>{{s.name}}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <input type="hidden" id="service">
+
+            <!-- 🕒 ЧАСОВЕ -->
+            <h3>🕒 Свободни часове</h3>
+            <div id="slots" class="slots-grid"></div>
+            <input type="hidden" id="selectedTime">
+
+            <!-- 👤 ДАННИ -->
+            <h3>👤 Данни</h3>
+            <input id="name" placeholder="Име">
+            <input id="phone" placeholder="Телефон">
+            <input id="email" placeholder="Email">
+            <div class="consent-wrapper">
+                <label class="consent-label">
+                    <input type="checkbox" id="consent">
+
+                    <span class="consent-box"></span>
+
+                    <span class="consent-text">
+                        Съгласен съм личните ми данни да бъдат обработвани
+                        <a href="/privacy-policy" target="_blank">Политика</a>
+                    </span>
+                </label>
+            </div>
+
+            <!-- 📋 SUMMARY -->
+            <div id="summary" class="summary hidden">
+                <h3>📋 Резервация</h3>
+                <p><strong>Фризьор:</strong> <span id="sumBarber">-</span></p>
+                <p><strong>Услуга:</strong> <span id="sumService">-</span></p>
+                <p><strong>Дата:</strong> <span id="sumDate">-</span></p>
+                <p><strong>Ден:</strong> <span id="sumDay">-</span></p>
+                <p><strong>Час:</strong> <span id="sumTime">-</span></p>
+            </div>
+
+            <!-- 🔘 BUTTON -->
+            <button class="main-btn" onclick="book()">Запази</button>
+
+        </div>
+    </div>
+
+    <div id="contact" class="contact">
+        <h2>📍 Контакти</h2>
+
+        <div class="contact-grid">
+            <div>
+                <h4>Адрес</h4>
+                <p>гр.София 💈ул.Подпоручик Футеков 1 (до метростанция Бели Дунав , срещу Била)</p>
+            </div>
+
+            <div>
+                <h4>Телефон</h4>
+                <p>📞 0876515172</p>
+            </div>
+
+            <div>
+                <h4>Работно време</h4>
+                <p>Вторник - Съб: 10:00 - 19:00</p>
+            </div>
+            <div>
+                <h4>Социални мрежи</h4>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=61552946242281" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/brusnarqt/?hl=en" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@kostadinbarber" target="_blank">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>✅ Успешна резервация!</h2>
+            <p>Ще получиш SMS за потвърждение.</p>
+
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content error">
+            <h2>Грешка</h2>
+            <p id="errorText">Нещо се обърка</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+</body>
+
+</html>

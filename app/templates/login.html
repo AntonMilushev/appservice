@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<div class="login-box">
+    <h2>💈 Login</h2>
+
+    <div class="input-group">
+        <input id="username" type="text" required>
+        <label>Username</label>
+    </div>
+
+    <div class="input-group">
+        <input id="password" type="password" required>
+        <label>Password</label>
+    </div>
+
+    <button onclick="login()">Login</button>
+</div>
+
+<script>
+    function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (!username || !password) {
+            alert("Моля попълни всички полета");
+            return;
+        }
+
+        fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.message) {
+                    window.location = res.role === "ADMIN" ? "/admin" : "/barber";
+                } else {
+                    alert(res.error || "Грешка при вход");
+                }
+            });
+    }
+</script>
