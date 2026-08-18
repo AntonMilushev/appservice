@@ -20,9 +20,6 @@ def start_scheduler(app):
     if scheduler.running:
         return
 
-    # Защита само за локален dev сървър с debug=True (python run.py),
-    # където Flask reloader-ът спауни втори процес.
-    # Под gunicorn (production) app.debug е False, така че тази проверка се прескача.
     if app.debug and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
         return
 
@@ -56,7 +53,7 @@ def create_app():
     # 🔌 ROUTES
     from app.routes.main import main
     from app.routes.booking import booking_bp
-    from app.routes.barber import barber_bp
+    from app.routes.provider import provider_bp
     from app.routes.admin import admin_bp
     from app.routes.auth import auth_bp
     from app.routes.bulkgate_webhook import bulkgate_webhook
@@ -65,7 +62,7 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(main)
     app.register_blueprint(booking_bp)
-    app.register_blueprint(barber_bp)
+    app.register_blueprint(provider_bp)
     app.register_blueprint(bulkgate_webhook)
 
     @app.before_request
@@ -107,12 +104,10 @@ def create_app():
             db.session.rollback()
             print("❌ Visit logging error:", e)
 
-    # ✅ SW ROUTE (ВЪТРЕ в create_app)
     @app.route('/sw.js')
     def sw():
         return app.send_static_file('sw.js')
 
-    # ✅ HEADER (ВЪТРЕ в create_app)
     @app.after_request
     def add_header(response):
         response.headers['Service-Worker-Allowed'] = '/'

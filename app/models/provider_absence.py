@@ -1,13 +1,12 @@
 from app.extensions import db
-from datetime import datetime
 from app.utils.time_utils import sofia_now
 
 
-class BarberAbsence(db.Model):
-    __tablename__ = "barber_absence"
+class ProviderAbsence(db.Model):
+    __tablename__ = "provider_absence"
 
     id = db.Column(db.Integer, primary_key=True)
-    barber_id = db.Column(db.Integer, db.ForeignKey('barber.id'), nullable=False)
+    provider_id = db.Column(db.Integer, db.ForeignKey("provider.id"), nullable=False)
 
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
@@ -21,4 +20,4 @@ class BarberAbsence(db.Model):
 
     created_at = db.Column(db.DateTime, default=sofia_now)
 
-    barber = db.relationship('Barber', backref='absences')
+    provider = db.relationship("Provider", backref="absences")

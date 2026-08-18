@@ -1,12 +1,12 @@
-from .barber import Barber
+from .provider import Provider
 from .service import Service
+from .provider_service import ProviderService
 from .booking import Booking
 from .user import User
 from .log import Log
 from .push_subscription import PushSubscription
-from .barber_absence import BarberAbsence
+from .provider_absence import ProviderAbsence
 from .sms_log import SmsLog
 from .email_log import EmailLog
 from app.routes.bulkgate_webhook import bulkgate_webhook
 from app.utils.time_utils import sofia_now
-

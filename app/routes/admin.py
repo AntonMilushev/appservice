@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, session, redirect, request
 from app.extensions import db
-from app.models import Booking, Barber, User
+from app.models import Booking, Provider, Service, ProviderService, User
 from app.utils.logger import log_action
 import os
 import uuid
@@ -21,22 +21,24 @@ admin_bp = Blueprint('admin', __name__)
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../static/uploads')
 
 
+def _require_admin():
+    return session.get('role') == 'ADMIN'
+
+
 # ======================================================
 # 📸 UPLOAD IMAGE
 # ======================================================
 @admin_bp.route('/admin/upload', methods=['POST'])
 def upload_image():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     file = request.files.get('image')
-
     if not file:
         return jsonify({"error": "No file"}), 400
 
     filename = str(uuid.uuid4()) + "_" + file.filename
     path = os.path.join(UPLOAD_FOLDER, filename)
-
     file.save(path)
 
     return jsonify({"url": f"/static/uploads/{filename}"})
@@ -47,7 +49,7 @@ def upload_image():
 # ======================================================
 @admin_bp.route('/admin')
 def admin_page():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return redirect('/login')
 
     return render_template("admin.html")
@@ -58,28 +60,20 @@ def admin_page():
 # ======================================================
 @admin_bp.route('/admin/dashboard')
 def admin_dashboard():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    # 🔥 взимаме дата от URL
-    selected_date = request.args.get("date")
+    selected_date = request.args.get("date") or sofia_now().strftime("%Y-%m-%d")
 
-    # ако няма → днес
-    if not selected_date:
-        selected_date = sofia_now().strftime("%Y-%m-%d")
-
-    barbers = Barber.query.all()
+    providers = Provider.query.all()
     result = []
 
-    for barber in barbers:
-        bookings = Booking.query.filter_by(barber_id=barber.id).all()
-
+    for provider in providers:
+        bookings = Booking.query.filter_by(provider_id=provider.id).all()
         filtered_bookings = []
 
         for b in bookings:
             booking_date = b.start_time.strftime("%Y-%m-%d")
-
-            # 🔥 филтър по дата
             if booking_date == selected_date:
                 filtered_bookings.append({
                     "id": b.id,
@@ -90,83 +84,72 @@ def admin_dashboard():
                 })
 
         result.append({
-            "barber": barber.name,
-            "barber_id": barber.id,
+            "provider": provider.name,
+            "provider_id": provider.id,
             "bookings": filtered_bookings,
-            "working_start": barber.working_start.strftime("%H:%M") if barber.working_start else "09:00",
-            "working_end": barber.working_end.strftime("%H:%M") if barber.working_end else "19:00"
+            "working_start": provider.working_start.strftime("%H:%M") if provider.working_start else "09:00",
+            "working_end": provider.working_end.strftime("%H:%M") if provider.working_end else "19:00"
         })
 
     return jsonify(result)
 
 
 # ======================================================
-# ✔ APPROVE BOOKING
+# ✔ APPROVE / ❌ REJECT / 🗑 DELETE BOOKING
 # ======================================================
 @admin_bp.route('/admin/approve/<int:id>', methods=['POST'])
 def approve_booking_route(id):
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     booking = db.session.get(Booking, id)
-
     if not booking:
         return jsonify({"error": "Няма запис"}), 404
 
     approve_booking(booking)
-
-    log_action("APPROVE", f"Booking {booking.id} approved", booking.barber_id)
+    log_action("APPROVE", f"Booking {booking.id} approved", booking.provider_id)
 
     return jsonify({"message": "Approved"})
 
-# ======================================================
-# ❌ REJECT BOOKING
-# ======================================================
+
 @admin_bp.route('/admin/reject/<int:id>', methods=['POST'])
 def reject_booking_route(id):
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     booking = db.session.get(Booking, id)
-
     if not booking:
         return jsonify({"error": "Няма запис"}), 404
 
-    reject_booking(booking)  # 👈 ТУК
-
-    log_action("REJECT", f"Booking {booking.id} rejected", booking.barber_id)
+    reject_booking(booking)
+    log_action("REJECT", f"Booking {booking.id} rejected", booking.provider_id)
 
     return jsonify({"message": "Rejected"})
 
-# ======================================================
-# 🗑 DELETE BOOKING
-# ======================================================
+
 @admin_bp.route('/admin/delete/<int:id>', methods=['POST'])
 def delete_booking(id):
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     booking = db.session.get(Booking, id)
-
     if not booking:
         return jsonify({"error": "Няма запис"}), 404
 
-    barber_id = booking.barber_id
-
+    provider_id = booking.provider_id
     db.session.delete(booking)
     db.session.commit()
 
-    log_action("DELETE_BOOKING", f"Booking {id} deleted", barber_id)
-
+    log_action("DELETE_BOOKING", f"Booking {id} deleted", provider_id)
     return jsonify({"message": "Deleted"})
 
 
 # ======================================================
-# ➕ CREATE BARBER + USER (🔥 ВАЖНО)
+# ➕ CREATE PROVIDER + USER LOGIN
 # ======================================================
-@admin_bp.route('/admin/barber', methods=['POST'])
-def create_barber():
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider', methods=['POST'])
+def create_provider():
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     data = request.get_json(silent=True) or {}
@@ -179,156 +162,146 @@ def create_barber():
     if not name or not username or not password:
         return jsonify({"error": "Всички полета са задължителни"}), 400
 
-    existing = User.query.filter_by(username=username).first()
-    if existing:
+    if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username вече съществува"}), 400
 
-    barber = Barber(
+    provider = Provider(
         name=name,
         image=image,
         is_active=True,
-        working_days="2,3,4,5,6",
+        working_days="1,2,3,4,5,6",
         working_start=time(10, 0),
         working_end=time(19, 0),
         break_start=time(13, 0),
         break_end=time(14, 0)
     )
 
-    db.session.add(barber)
+    db.session.add(provider)
     db.session.commit()
 
     user = User(
         username=username,
         password=generate_password_hash(password),
-        role="BARBER",
-        barber_id=barber.id
+        role="PROVIDER",
+        provider_id=provider.id
     )
 
     db.session.add(user)
     db.session.commit()
 
-    log_action("CREATE_BARBER", f"{name} created with username {username}", barber.id)
+    log_action("CREATE_PROVIDER", f"{name} created with username {username}", provider.id)
 
-    return jsonify({"message": "Created", "barber_id": barber.id})
+    return jsonify({"message": "Created", "provider_id": provider.id})
+
+
 # ======================================================
-# 📥 READ BARBERS
+# 📥 READ PROVIDERS
 # ======================================================
-@admin_bp.route('/admin/barbers')
-def get_barbers():
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/providers')
+def get_providers():
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barbers = Barber.query.all()
-
-    return jsonify([
-        {
-            "id": b.id,
-            "name": b.name,
-            "image": b.image
-        }
-        for b in barbers
-    ])
+    providers = Provider.query.all()
+    return jsonify([{"id": p.id, "name": p.name, "image": p.image, "is_active": p.is_active} for p in providers])
 
 
 # ======================================================
-# ✏️ UPDATE BARBER
+# ✏️ UPDATE PROVIDER
 # ======================================================
-@admin_bp.route('/admin/barber/<int:id>', methods=['PUT'])
-def update_barber(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>', methods=['PUT'])
+def update_provider(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barber = Barber.query.get(id)
-
-    if not barber:
+    provider = Provider.query.get(id)
+    if not provider:
         return jsonify({"error": "Not found"}), 404
 
     data = request.get_json(silent=True) or {}
+    old_name = provider.name
 
-    old_name = barber.name
-
-    barber.name = data.get('name', barber.name)
-    barber.image = data.get('image', barber.image)
+    provider.name = data.get('name', provider.name)
+    provider.image = data.get('image', provider.image)
+    if 'is_active' in data:
+        provider.is_active = bool(data.get('is_active'))
 
     db.session.commit()
 
-    log_action("UPDATE_BARBER", f"{old_name} → {barber.name}", barber.id)
-
+    log_action("UPDATE_PROVIDER", f"{old_name} → {provider.name}", provider.id)
     return jsonify({"message": "Updated"})
 
 
 # ======================================================
-# ❌ DELETE BARBER (🔥 FIX)
+# ❌ DELETE PROVIDER
 # ======================================================
-@admin_bp.route('/admin/barber/<int:id>', methods=['DELETE'])
-def delete_barber(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>', methods=['DELETE'])
+def delete_provider(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barber = Barber.query.get(id)
-
-    if not barber:
+    provider = Provider.query.get(id)
+    if not provider:
         return jsonify({"error": "Not found"}), 404
 
-    name = barber.name
+    name = provider.name
 
-    Booking.query.filter_by(barber_id=id).delete()
-    User.query.filter_by(barber_id=id, role="BARBER").delete()
+    Booking.query.filter_by(provider_id=id).delete()
+    User.query.filter_by(provider_id=id, role="PROVIDER").delete()
+    ProviderService.query.filter_by(provider_id=id).delete()
 
-    db.session.delete(barber)
+    db.session.delete(provider)
     db.session.commit()
 
-    log_action("DELETE_BARBER", f"Barber {name} deleted", id)
-
+    log_action("DELETE_PROVIDER", f"Provider {name} deleted", id)
     return jsonify({"message": "Deleted"})
 
 
-
-@admin_bp.route('/admin/barber/<int:id>/settings', methods=['GET'])
-def admin_get_barber_settings(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>/settings', methods=['GET'])
+def admin_get_provider_settings(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barber = Barber.query.get(id)
-    if not barber:
+    provider = Provider.query.get(id)
+    if not provider:
         return jsonify({"error": "Not found"}), 404
 
-    return jsonify(get_schedule(barber))
+    return jsonify(get_schedule(provider))
 
 
-@admin_bp.route('/admin/barber/<int:id>/settings', methods=['PUT'])
-def admin_update_barber_settings(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>/settings', methods=['PUT'])
+def admin_update_provider_settings(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barber = Barber.query.get(id)
-    if not barber:
+    provider = Provider.query.get(id)
+    if not provider:
         return jsonify({"error": "Not found"}), 404
 
     try:
-        result = update_schedule(barber, request.get_json(silent=True) or {})
+        result = update_schedule(provider, request.get_json(silent=True) or {})
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-    log_action("UPDATE_SCHEDULE", f"Админ обнови графика на {barber.name}", barber.id)
+    log_action("UPDATE_SCHEDULE", f"Админ обнови графика на {provider.name}", provider.id)
     return jsonify(result)
 
 
-@admin_bp.route('/admin/barber/<int:id>/absences', methods=['GET'])
-def admin_get_barber_absences(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>/absences', methods=['GET'])
+def admin_get_provider_absences(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     return jsonify(list_absences(id, include_past=True))
 
 
-@admin_bp.route('/admin/barber/<int:id>/absences', methods=['POST'])
-def admin_create_barber_absence(id):
-    if session.get('role') != 'ADMIN':
+@admin_bp.route('/admin/provider/<int:id>/absences', methods=['POST'])
+def admin_create_provider_absence(id):
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    barber = Barber.query.get(id)
-    if not barber:
+    provider = Provider.query.get(id)
+    if not provider:
         return jsonify({"error": "Not found"}), 404
 
     try:
@@ -336,17 +309,17 @@ def admin_create_barber_absence(id):
     except (ValueError, TypeError) as e:
         return jsonify({"error": str(e) or "Невалидни данни"}), 400
 
-    log_action("CREATE_ABSENCE", f"{barber.name}: {absence.reason} {absence.start_date}-{absence.end_date}", id)
+    log_action("CREATE_ABSENCE", f"{provider.name}: {absence.reason} {absence.start_date}-{absence.end_date}", id)
     return jsonify({"message": "OK", "id": absence.id, "conflicts": conflicts}), 201
 
 
 @admin_bp.route('/admin/absences/<int:id>', methods=['DELETE'])
 def admin_delete_absence(id):
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    from app.models.barber_absence import BarberAbsence
-    absence = BarberAbsence.query.get(id)
+    from app.models.provider_absence import ProviderAbsence
+    absence = ProviderAbsence.query.get(id)
     if not absence:
         return jsonify({"error": "Not found"}), 404
 
@@ -355,11 +328,201 @@ def admin_delete_absence(id):
     return jsonify({"message": "Deleted"})
 
 
+# ======================================================
+# 🧾 SERVICE CATALOG (name, duration, base price)
+# ======================================================
+@admin_bp.route('/admin/services', methods=['GET'])
+def admin_list_services():
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    services = Service.query.all()
+    return jsonify([
+        {
+            "id": s.id,
+            "name": s.name,
+            "duration_minutes": s.duration_minutes,
+            "price": float(s.price) if s.price is not None else None,
+            "is_active": s.is_active
+        }
+        for s in services
+    ])
+
+
+@admin_bp.route('/admin/services', methods=['POST'])
+def admin_create_service():
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    duration = data.get('duration_minutes')
+    price = data.get('price')
+
+    if not name or not duration:
+        return jsonify({"error": "Име и времетраене са задължителни"}), 400
+
+    try:
+        duration = int(duration)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Невалидно времетраене"}), 400
+
+    service = Service(
+        name=name,
+        duration_minutes=duration,
+        price=price if price not in (None, "") else None,
+        is_active=True
+    )
+
+    db.session.add(service)
+    db.session.commit()
+
+    log_action("CREATE_SERVICE", f"{name} ({duration} мин)")
+    return jsonify({"message": "Created", "id": service.id}), 201
+
+
+@admin_bp.route('/admin/services/<int:id>', methods=['PUT'])
+def admin_update_service(id):
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    service = Service.query.get(id)
+    if not service:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+
+    if 'name' in data:
+        service.name = data['name'].strip()
+    if 'duration_minutes' in data:
+        try:
+            service.duration_minutes = int(data['duration_minutes'])
+        except (TypeError, ValueError):
+            return jsonify({"error": "Невалидно времетраене"}), 400
+    if 'price' in data:
+        service.price = data['price'] if data['price'] not in (None, "") else None
+    if 'is_active' in data:
+        service.is_active = bool(data['is_active'])
+
+    db.session.commit()
+    log_action("UPDATE_SERVICE", f"Service {id} updated")
+    return jsonify({"message": "Updated"})
+
+
+@admin_bp.route('/admin/services/<int:id>', methods=['DELETE'])
+def admin_delete_service(id):
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    service = Service.query.get(id)
+    if not service:
+        return jsonify({"error": "Not found"}), 404
+
+    ProviderService.query.filter_by(service_id=id).delete()
+    db.session.delete(service)
+    db.session.commit()
+
+    log_action("DELETE_SERVICE", f"Service {id} deleted")
+    return jsonify({"message": "Deleted"})
+
+
+# ======================================================
+# 🔗 PROVIDER <-> SERVICE (кой служител какво предлага + override цена/времетраене)
+# ======================================================
+@admin_bp.route('/admin/provider/<int:id>/services', methods=['GET'])
+def admin_provider_services(id):
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    provider = Provider.query.get(id)
+    if not provider:
+        return jsonify({"error": "Not found"}), 404
+
+    return jsonify([link.to_dict() for link in provider.service_links])
+
+
+@admin_bp.route('/admin/provider/<int:id>/services', methods=['POST'])
+def admin_assign_provider_service(id):
+    """Добавя услуга на служителя. По избор: price / duration_minutes override."""
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    provider = Provider.query.get(id)
+    if not provider:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+    service_id = data.get('service_id')
+
+    if not service_id:
+        return jsonify({"error": "Липсва service_id"}), 400
+
+    service = Service.query.get(service_id)
+    if not service:
+        return jsonify({"error": "Невалидна услуга"}), 400
+
+    existing = ProviderService.get(id, service_id)
+    if existing:
+        return jsonify({"error": "Служителят вече предлага тази услуга"}), 400
+
+    link = ProviderService(
+        provider_id=id,
+        service_id=service_id,
+        price=data.get('price') if data.get('price') not in (None, "") else None,
+        duration_minutes=data.get('duration_minutes') if data.get('duration_minutes') not in (None, "") else None,
+    )
+
+    db.session.add(link)
+    db.session.commit()
+
+    log_action("ASSIGN_SERVICE", f"{provider.name} ← {service.name}", provider.id)
+    return jsonify({"message": "Assigned", "id": link.id}), 201
+
+
+@admin_bp.route('/admin/provider/<int:id>/services/<int:service_id>', methods=['PUT'])
+def admin_update_provider_service(id, service_id):
+    """Обновява override цена/времетраене за конкретен служител+услуга."""
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    link = ProviderService.get(id, service_id)
+    if not link:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+
+    if 'price' in data:
+        link.price = data['price'] if data['price'] not in (None, "") else None
+    if 'duration_minutes' in data:
+        link.duration_minutes = data['duration_minutes'] if data['duration_minutes'] not in (None, "") else None
+
+    db.session.commit()
+    return jsonify({"message": "Updated", **link.to_dict()})
+
+
+@admin_bp.route('/admin/provider/<int:id>/services/<int:service_id>', methods=['DELETE'])
+def admin_remove_provider_service(id, service_id):
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    link = ProviderService.get(id, service_id)
+    if not link:
+        return jsonify({"error": "Not found"}), 404
+
+    db.session.delete(link)
+    db.session.commit()
+
+    return jsonify({"message": "Removed"})
+
+
+# ======================================================
+# 📜 SMS LOGS (непроменено)
+# ======================================================
 PER_PAGE = 10
 
 @admin_bp.route('/admin/sms-logs')
 def admin_sms_logs():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     phone = request.args.get('phone')
@@ -383,13 +546,7 @@ def admin_sms_logs():
         query = query.filter_by(success=(success == "true"))
 
     total = query.count()
-
-    logs = (
-        query.order_by(SmsLog.created_at.desc())
-        .offset((page - 1) * PER_PAGE)
-        .limit(PER_PAGE)
-        .all()
-    )
+    logs = query.order_by(SmsLog.created_at.desc()).offset((page - 1) * PER_PAGE).limit(PER_PAGE).all()
 
     return jsonify({
         "items": [
@@ -415,7 +572,7 @@ def admin_sms_logs():
 
 @admin_bp.route('/admin/sms-logs/<int:id>', methods=['DELETE'])
 def admin_delete_sms_log(id):
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     log = SmsLog.query.get(id)
@@ -424,16 +581,14 @@ def admin_delete_sms_log(id):
 
     db.session.delete(log)
     db.session.commit()
-
     return jsonify({"message": "Deleted"})
 
 
 @admin_bp.route('/admin/sms-logs', methods=['DELETE'])
 def admin_delete_sms_logs_bulk():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
-    # изтрива всички логове, отговарящи на текущите филтри (или всички, ако няма филтри)
     phone = request.args.get('phone')
     status_type = request.args.get('status_type')
     success = request.args.get('success')
@@ -451,13 +606,12 @@ def admin_delete_sms_logs_bulk():
     db.session.commit()
 
     log_action("DELETE_SMS_LOGS", f"Изтрити {deleted_count} SMS лог записа")
-
     return jsonify({"message": "Deleted", "count": deleted_count})
 
 
 @admin_bp.route('/admin/monitoring')
 def monitoring_page():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return redirect('/login')
 
     return render_template("monitoring.html")
@@ -465,182 +619,88 @@ def monitoring_page():
 
 @admin_bp.route('/admin/monitoring/stats')
 def monitoring_stats():
-    if session.get('role') != 'ADMIN':
+    if not _require_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     now = sofia_now()
-
-    # ==========================================
-    # ДНЕС - по българско време
-    # ==========================================
-
     today = now.date()
-
     tomorrow = today + timedelta(days=1)
 
     day_start = datetime.combine(today, datetime.min.time())
     day_end = datetime.combine(tomorrow, datetime.min.time())
 
-    # ==========================================
-    # BOOKINGS
-    # ==========================================
-
-    # Колко заявки са създадени днес
     new_requests_today = Booking.query.filter(
-        Booking.created_at >= day_start,
-        Booking.created_at < day_end
+        Booking.created_at >= day_start, Booking.created_at < day_end
     ).count()
 
-    # Колко са потвърдени днес
     confirmed_today = Booking.query.filter(
-        Booking.confirmed_at >= day_start,
-        Booking.confirmed_at < day_end
+        Booking.confirmed_at >= day_start, Booking.confirmed_at < day_end
     ).count()
 
-    # Колко са отказани днес
     cancelled_today = Booking.query.filter(
-        Booking.cancelled_at >= day_start,
-        Booking.cancelled_at < day_end
+        Booking.cancelled_at >= day_start, Booking.cancelled_at < day_end
     ).count()
 
-    # Колко потвърдени часа има за днес
     confirmed_slots_today = Booking.query.filter(
-        Booking.start_time >= day_start,
-        Booking.start_time < day_end,
-        Booking.status == "CONFIRMED"
+        Booking.start_time >= day_start, Booking.start_time < day_end, Booking.status == "CONFIRMED"
     ).count()
 
-    # Чакащи заявки в момента
-    pending = Booking.query.filter(
-        Booking.status == "PENDING"
-    ).count()
-
-    # ==========================================
-    # SMS
-    # ==========================================
+    pending = Booking.query.filter(Booking.status == "PENDING").count()
 
     sms_day_ago = sofia_now() - timedelta(hours=24)
 
-    sms_success = SmsLog.query.filter(
-    SmsLog.created_at >= sms_day_ago,
-    SmsLog.success == True
-    ).count()
-
-    sms_failed = SmsLog.query.filter(
-    SmsLog.created_at >= sms_day_ago,
-    SmsLog.success == False
-    ).count()
-
+    sms_success = SmsLog.query.filter(SmsLog.created_at >= sms_day_ago, SmsLog.success == True).count()
+    sms_failed = SmsLog.query.filter(SmsLog.created_at >= sms_day_ago, SmsLog.success == False).count()
     recent_sms_failures = SmsLog.query.filter(
-    SmsLog.created_at >= sms_day_ago,
-    SmsLog.success == False
-    ).order_by(
-    SmsLog.created_at.desc()
-    ).limit(10).all()
+        SmsLog.created_at >= sms_day_ago, SmsLog.success == False
+    ).order_by(SmsLog.created_at.desc()).limit(10).all()
 
-    # ==========================================
-    # EMAIL
-    # ==========================================
-
-    email_success = EmailLog.query.filter(
-    EmailLog.created_at >= sms_day_ago,
-    EmailLog.success == True
-    ).count()
-
-    email_failed = EmailLog.query.filter(
-    EmailLog.created_at >= sms_day_ago,
-    EmailLog.success == False
-    ).count()
-
+    email_success = EmailLog.query.filter(EmailLog.created_at >= sms_day_ago, EmailLog.success == True).count()
+    email_failed = EmailLog.query.filter(EmailLog.created_at >= sms_day_ago, EmailLog.success == False).count()
     recent_email_failures = EmailLog.query.filter(
-    EmailLog.created_at >= sms_day_ago,
-    EmailLog.success == False
-    ).order_by(
-    EmailLog.created_at.desc()
-    ).limit(10).all()
+        EmailLog.created_at >= sms_day_ago, EmailLog.success == False
+    ).order_by(EmailLog.created_at.desc()).limit(10).all()
 
-    # ==========================================
-    # ACTIVITY
-    # ==========================================
-
-    activity = Log.query.order_by(
-        Log.created_at.desc()
-    ).limit(20).all()
+    activity = Log.query.order_by(Log.created_at.desc()).limit(20).all()
 
     return jsonify({
-
-        # ======================================
-        # BOOKINGS
-        # ======================================
-
         "bookings": {
-            # Нови заявки, направени днес
             "new_requests_today": new_requests_today,
-
-            # Потвърдени днес
             "today_confirmed": confirmed_today,
-
-            # Отказани днес
             "today_cancelled": cancelled_today,
-
-            # Потвърдени часове, които са за днес
             "today_booked_hours": confirmed_slots_today,
-
-            # Чакащи в момента
             "pending": pending,
-
-            # Общо заявки, създадени днес
             "today_total": new_requests_today
         },
-
-        # ======================================
-        # SMS
-        # ======================================
-
         "sms": {
             "success_24h": sms_success,
             "failed_24h": sms_failed,
-
             "recent_failures": [
                 {
                     "phone": s.phone,
                     "status_type": s.status_type,
                     "error": s.error,
                     "created_at": s.created_at.strftime("%d.%m.%Y %H:%M")
-                }
-                for s in recent_sms_failures
+                } for s in recent_sms_failures
             ]
         },
-
-        # ======================================
-        # EMAIL
-        # ======================================
-
         "email": {
             "success_24h": email_success,
             "failed_24h": email_failed,
-
             "recent_failures": [
                 {
                     "to_email": e.to_email,
                     "status_type": e.status_type,
                     "error": e.error,
                     "created_at": e.created_at.strftime("%d.%m.%Y %H:%M")
-                }
-                for e in recent_email_failures
+                } for e in recent_email_failures
             ]
         },
-
-        # ======================================
-        # ACTIVITY
-        # ======================================
-
         "activity": [
             {
                 "action": l.action,
                 "description": l.description,
                 "created_at": l.created_at.strftime("%d.%m.%Y %H:%M")
-            }
-            for l in activity
+            } for l in activity
         ]
     })

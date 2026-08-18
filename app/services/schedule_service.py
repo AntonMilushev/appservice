@@ -1,8 +1,7 @@
 from datetime import datetime, date
 from app.extensions import db
-from app.models.barber_absence import BarberAbsence
+from app.models.provider_absence import ProviderAbsence
 from app.models.booking import Booking
-from app.utils.time_utils import sofia_now
 
 
 def _parse_time(value):
@@ -15,17 +14,17 @@ def _parse_date(value):
     return datetime.strptime(value, "%Y-%m-%d").date()
 
 
-def get_schedule(barber):
+def get_schedule(provider):
     return {
-        "working_days": barber.working_days or "",
-        "working_start": barber.working_start.strftime("%H:%M") if barber.working_start else None,
-        "working_end": barber.working_end.strftime("%H:%M") if barber.working_end else None,
-        "break_start": barber.break_start.strftime("%H:%M") if barber.break_start else None,
-        "break_end": barber.break_end.strftime("%H:%M") if barber.break_end else None,
+        "working_days": provider.working_days or "",
+        "working_start": provider.working_start.strftime("%H:%M") if provider.working_start else None,
+        "working_end": provider.working_end.strftime("%H:%M") if provider.working_end else None,
+        "break_start": provider.break_start.strftime("%H:%M") if provider.break_start else None,
+        "break_end": provider.break_end.strftime("%H:%M") if provider.break_end else None,
     }
 
 
-def update_schedule(barber, data):
+def update_schedule(provider, data):
     working_days = data.get("working_days")
 
     if working_days is not None:
@@ -33,35 +32,34 @@ def update_schedule(barber, data):
         for d in days:
             if not d.isdigit() or not (1 <= int(d) <= 7):
                 raise ValueError("Невалидни работни дни (използвай 1-7, разделени със запетая)")
-        barber.working_days = ",".join(days)
+        provider.working_days = ",".join(days)
 
     if data.get("working_start") is not None:
-        barber.working_start = _parse_time(data.get("working_start"))
+        provider.working_start = _parse_time(data.get("working_start"))
 
     if data.get("working_end") is not None:
-        barber.working_end = _parse_time(data.get("working_end"))
+        provider.working_end = _parse_time(data.get("working_end"))
 
-    # почивка - позволяваме да се изчисти (изпратен "" -> None)
     if "break_start" in data:
-        barber.break_start = _parse_time(data.get("break_start"))
+        provider.break_start = _parse_time(data.get("break_start"))
 
     if "break_end" in data:
-        barber.break_end = _parse_time(data.get("break_end"))
+        provider.break_end = _parse_time(data.get("break_end"))
 
-    if barber.working_start and barber.working_end and barber.working_start >= barber.working_end:
+    if provider.working_start and provider.working_end and provider.working_start >= provider.working_end:
         raise ValueError("Началото на работния ден трябва да е преди края")
 
     db.session.commit()
-    return get_schedule(barber)
+    return get_schedule(provider)
 
 
-def list_absences(barber_id, include_past=False):
-    query = BarberAbsence.query.filter_by(barber_id=barber_id)
+def list_absences(provider_id, include_past=False):
+    query = ProviderAbsence.query.filter_by(provider_id=provider_id)
 
     if not include_past:
-        query = query.filter(BarberAbsence.end_date >= date.today())
+        query = query.filter(ProviderAbsence.end_date >= date.today())
 
-    absences = query.order_by(BarberAbsence.start_date).all()
+    absences = query.order_by(ProviderAbsence.start_date).all()
 
     return [
         {
@@ -77,7 +75,7 @@ def list_absences(barber_id, include_past=False):
     ]
 
 
-def create_absence(barber_id, data):
+def create_absence(provider_id, data):
     if not data.get("start_date"):
         raise ValueError("Липсва начална дата")
 
@@ -93,8 +91,8 @@ def create_absence(barber_id, data):
     if start_date != end_date and (unavailable_from or unavailable_to):
         raise ValueError("Частично отсъствие (по час) е позволено само за един ден")
 
-    absence = BarberAbsence(
-        barber_id=barber_id,
+    absence = ProviderAbsence(
+        provider_id=provider_id,
         start_date=start_date,
         end_date=end_date,
         unavailable_from=unavailable_from,
@@ -106,16 +104,16 @@ def create_absence(barber_id, data):
     db.session.add(absence)
     db.session.commit()
 
-    conflicts = _get_conflicting_bookings(barber_id, absence)
+    conflicts = _get_conflicting_bookings(provider_id, absence)
     return absence, conflicts
 
 
-def _get_conflicting_bookings(barber_id, absence):
+def _get_conflicting_bookings(provider_id, absence):
     start_dt = datetime.combine(absence.start_date, absence.unavailable_from or datetime.min.time())
     end_dt = datetime.combine(absence.end_date, absence.unavailable_to or datetime.max.time())
 
     bookings = Booking.query.filter(
-        Booking.barber_id == barber_id,
+        Booking.provider_id == provider_id,
         Booking.status.in_(["PENDING", "CONFIRMED"]),
         Booking.start_time < end_dt,
         Booking.end_time > start_dt,
@@ -133,10 +131,10 @@ def _get_conflicting_bookings(barber_id, absence):
     ]
 
 
-def delete_absence(barber_id, absence_id):
-    absence = BarberAbsence.query.get(absence_id)
+def delete_absence(provider_id, absence_id):
+    absence = ProviderAbsence.query.get(absence_id)
 
-    if not absence or absence.barber_id != barber_id:
+    if not absence or absence.provider_id != provider_id:
         return False
 
     db.session.delete(absence)

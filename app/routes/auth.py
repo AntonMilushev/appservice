@@ -5,17 +5,11 @@ from werkzeug.security import check_password_hash
 auth_bp = Blueprint('auth', __name__)
 
 
-# ======================================================
-# 🖥️ LOGIN PAGE
-# ======================================================
 @auth_bp.route('/login', methods=['GET'])
 def login_page():
     return render_template("login.html")
 
 
-# ======================================================
-# 🔐 LOGIN
-# ======================================================
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -34,14 +28,12 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    # ✅ SESSION
-    session.clear()  # 🔥 важно
+    session.clear()
     session['user_id'] = user.id
     session['role'] = user.role
-    session['barber_id'] = user.barber_id
+    session['provider_id'] = user.provider_id
 
-    # 🔥 redirect логика
-    redirect_url = "/admin" if user.role == "ADMIN" else "/barber"
+    redirect_url = "/admin" if user.role == "ADMIN" else "/provider"
 
     return jsonify({
         "message": "OK",
@@ -50,18 +42,12 @@ def login():
     })
 
 
-# ======================================================
-# 🚪 LOGOUT
-# ======================================================
 @auth_bp.route('/logout')
 def logout():
     session.clear()
     return redirect('/login')
 
 
-# ======================================================
-# 🔍 CHECK SESSION (много полезно)
-# ======================================================
 @auth_bp.route('/me')
 def me():
     if not session.get('user_id'):
@@ -70,5 +56,5 @@ def me():
     return jsonify({
         "authenticated": True,
         "role": session.get('role'),
-        "barber_id": session.get('barber_id')
+        "provider_id": session.get('provider_id')
     })

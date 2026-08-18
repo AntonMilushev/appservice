@@ -14,13 +14,13 @@ page_views_total = Counter(
 booking_created_total = Counter(
     "booking_created_total",
     "Total created bookings",
-    ["barber", "service", "hour"]
+    ["provider", "service", "hour"]
 )
 
 booking_status_total = Counter(
     "booking_status_total",
     "Booking status changes",
-    ["status", "barber", "service"]
+    ["status", "provider", "service"]
 )
 
 
@@ -32,7 +32,7 @@ def record_booking_created(booking):
     hour = booking.start_time.astimezone(TZ).strftime("%H:00") if booking.start_time.tzinfo else booking.start_time.strftime("%H:00")
 
     booking_created_total.labels(
-        barber=booking.barber.name,
+        provider=booking.provider.name,
         service=booking.service.name,
         hour=hour
     ).inc()
@@ -41,7 +41,7 @@ def record_booking_created(booking):
 def record_booking_status(booking, status):
     booking_status_total.labels(
         status=status,
-        barber=booking.barber.name,
+        provider=booking.provider.name,
         service=booking.service.name
     ).inc()
 
