@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from datetime import datetime
-from app.models import Barber, Service
+from app.models import Provider, Service
 from app.metrics import metrics_response, record_page_view
 from app.utils.time_utils import sofia_today
 
@@ -20,7 +20,7 @@ def track_page_views():
 def index():
     return render_template(
         'index.html',
-        barbers=Barber.query.filter_by(is_active=True).all(),
+        provider=Provider.query.filter_by(is_active=True).all(),
         services=Service.query.all(),
         today=sofia_today()
     )
