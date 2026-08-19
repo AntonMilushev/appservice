@@ -2,10 +2,10 @@ from app.models import Log
 from app.extensions import db
 from flask import session
 
-def log_action(action, description, barber_id=None):
+def log_action(action, description, provider_id):
     log = Log(
         user_id=session.get('user_id'),
-        barber_id=barber_id,
+        provider_id=provider_id,
         action=action,
         description=description
     )
