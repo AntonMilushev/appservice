@@ -1,0 +1,6 @@
+2026-08-20 19:13:23,572 | INFO | 📧 STATUS: accepted | To: antonemilov.m@gmail.com | Booking: 1
+2026-08-20 19:13:23,572 | INFO | 📨 EMAIL THREAD START | To: antonemilov.m@gmail.com | Booking: 1 | Status: accepted
+2026-08-20 19:13:23,573 | INFO | 📨 BREVO REQUEST START | To: antonemilov.m@gmail.com | Booking: 1 | Status: accepted
+2026-08-20 19:13:23,573 | INFO | 📩 SMS STATUS: accepted | Phone: 0898485804 | Booking: 1
+2026-08-20 19:13:23,573 | ERROR | ❌ BREVO_API_KEY is missing | To: antonemilov.m@gmail.com | Booking: 1
+2026-08-20 19:13:23,575 | WARNING | ⚠️ SMS_APP_ID/SMS_APP_TOKEN липсват — SMS НЕ е изпратен | Phone: 0898485804 | Booking: 1

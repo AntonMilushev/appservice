@@ -2,7 +2,40 @@
    GLOBAL STATE
    ========================================================= */
 
-let selectedProvider = null; // пази избрания бръснар
+let selectedProvider = null;
+let selectedProviderName = null;
+let selectedServiceName = null;
+let selectedServicePrice = null;
+let selectedServiceDuration = null;
+let selectedDateFormatted = null;
+let selectedDay = null;
+
+
+/* =========================================================
+   TICKET — central render
+   ========================================================= */
+
+function updateTicket() {
+    document.getElementById("ticketProvider").textContent = selectedProviderName || "—";
+    document.getElementById("ticketProvider").classList.toggle("muted", !selectedProviderName);
+
+    document.getElementById("ticketService").textContent = selectedServiceName || "—";
+    document.getElementById("ticketService").classList.toggle("muted", !selectedServiceName);
+
+    document.getElementById("ticketDate").textContent = selectedDateFormatted || "—";
+    document.getElementById("ticketDate").classList.toggle("muted", !selectedDateFormatted);
+
+    const time = document.getElementById("selectedTime").value;
+    document.getElementById("ticketTime").textContent = time
+        ? `${time}${selectedServiceDuration ? " · " + selectedServiceDuration + " мин" : ""}`
+        : "—";
+    document.getElementById("ticketTime").classList.toggle("muted", !time);
+
+    document.getElementById("ticketPrice").textContent =
+        selectedServicePrice !== null && selectedServicePrice !== undefined
+            ? `${selectedServicePrice} лв.`
+            : "—";
+}
 
 
 /* =========================================================
@@ -10,62 +43,84 @@ let selectedProvider = null; // пази избрания бръснар
    ========================================================= */
 
 function selectProvider(e, id) {
-    document.querySelectorAll('.provider-card')
-        .forEach(c => c.classList.remove('active'));
-
+    document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('active'));
     e.currentTarget.classList.add('active');
 
     selectedProvider = id;
+    selectedProviderName = e.currentTarget.querySelector('.provider-name').textContent;
 
-    // unlock booking
-    document.getElementById('bookingSection')
-        .classList.remove('disabled');
-
-    // remove lock overlay
-    const lock = document.querySelector('.booking-lock');
-    if (lock) lock.remove();
-
-    // 👉 scroll към дата (само това!)
-    document.getElementById('date').scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-}
-
-function goHome() {
-    // scroll до горе
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-    // reset selection (provider, service, slot)
-    document.querySelectorAll(".active").forEach(el => {
-        el.classList.remove("active");
-    });
-
-    // disable booking секцията
-    document.getElementById("bookingSection").classList.add("disabled");
-
-    // clear inputs (по желание, но силно препоръчвам)
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("email").value = "";
-
-    // clear selected values
+    // reset downstream selections
+    selectedServiceName = null;
+    selectedServicePrice = null;
+    selectedServiceDuration = null;
     document.getElementById("service").value = "";
     document.getElementById("selectedTime").value = "";
-
-    // clear slots
     document.getElementById("slots").innerHTML = "";
 
-    // reset summary
-    document.getElementById("summary").classList.add("hidden");
+    updateTicket();
+    loadProviderServices(id);
+    checkForm();
 }
 
 
 /* =========================================================
-   LOAD AVAILABLE SLOTS (API CALL)
+   SERVICES (динамично според избрания специалист)
+   ========================================================= */
+
+function loadProviderServices(providerId) {
+    const container = document.getElementById("services");
+    container.innerHTML = "<p>Зареждане...</p>";
+
+    fetch(`/providers/${providerId}/services`)
+        .then(r => r.json())
+        .then(list => {
+            container.innerHTML = "";
+
+            if (!Array.isArray(list) || list.length === 0) {
+                container.innerHTML = "<p>Този специалист все още няма добавени услуги</p>";
+                return;
+            }
+
+            list.forEach(s => {
+                const card = document.createElement("div");
+                card.className = "service-card";
+                card.innerHTML = `
+                    <p>${s.service_name}</p>
+                    <span class="service-meta">${s.duration_minutes} мин${s.price !== null ? " · " + s.price + " лв." : ""}</span>
+                `;
+                card.addEventListener("click", (e) => selectService(e, s));
+                container.appendChild(card);
+            });
+        })
+        .catch(() => {
+            container.innerHTML = "<p>Грешка при зареждане на услугите</p>";
+        });
+}
+
+function selectService(e, service) {
+    document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+
+    document.getElementById("service").value = service.service_id;
+    selectedServiceName = service.service_name;
+    selectedServicePrice = service.price;
+    selectedServiceDuration = service.duration_minutes;
+
+    // reset time since duration/availability may differ
+    document.getElementById("selectedTime").value = "";
+    document.getElementById("slots").innerHTML = "";
+
+    updateTicket();
+
+    document.getElementById('date').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    loadSlots();
+    checkForm();
+}
+
+
+/* =========================================================
+   SLOTS
    ========================================================= */
 
 function loadSlots() {
@@ -83,150 +138,36 @@ function loadSlots() {
             container.innerHTML = "";
 
             if (!Array.isArray(slots) || slots.length === 0) {
-                container.innerHTML = "<p>Няма свободни часове</p>";
+                container.innerHTML = "<p>Няма свободни часове за тази дата</p>";
                 return;
             }
 
             document.getElementById("selectedTime").value = "";
-            document.getElementById("summary").classList.add("hidden");
+            updateTicket();
 
             slots.forEach(time => {
                 const btn = document.createElement("button");
                 btn.textContent = time;
                 btn.classList.add("slot");
-
+                btn.type = "button";
                 btn.onclick = () => selectSlot(btn, time);
-
                 container.appendChild(btn);
             });
         })
-        .catch(err => {
-            console.error("ERROR:", err);
+        .catch(() => {
             container.innerHTML = "<p>Грешка при зареждане</p>";
         });
 }
 
-
-/* =========================================================
-   SLOT SELECTION
-   ========================================================= */
-
 function selectSlot(element, time) {
-    document.querySelectorAll(".slot")
-        .forEach(s => s.classList.remove("active"));
-
+    document.querySelectorAll(".slot").forEach(s => s.classList.remove("active"));
     element.classList.add("active");
 
     document.getElementById("selectedTime").value = time;
+    updateTicket();
 
-    // 👉 scroll към формата
-    document.getElementById('name').scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-
-    updateSummary();
+    document.getElementById('name').scrollIntoView({ behavior: 'smooth', block: 'center' });
     checkForm();
-}
-
-
-/* =========================================================
-   BOOKING REQUEST (POST)
-   ========================================================= */
-
-function book() {
-    const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
-    const service = document.getElementById("service").value;
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("selectedTime").value;
-
-    const btn = document.querySelector(".main-btn");
-
-    const consent = document.getElementById("consent").checked;
-
-    // 🔒 GDPR check
-    if (!consent) {
-        showError("Трябва да се съгласите с обработката на лични данни.");
-        return;
-    }
-
-    // loading state
-    btn.disabled = true;
-    btn.innerText = "Запазване...";
-
-    fetch('/book', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-
-        body: JSON.stringify({
-            name,
-            phone,
-            email,
-            consent,
-            provider_id: selectedProvider,
-            service_id: service,
-            appointment_time: `${date}T${time}:00`
-        })
-    })
-        .then(async r => {
-            let data;
-
-            try {
-                data = await r.json();
-            } catch {
-                throw new Error("Сървърна грешка");
-            }
-
-            if (!r.ok) {
-                throw new Error(data.error || "Грешка");
-            }
-
-            return data;
-        })
-        .then(res => {
-            showSuccess();
-            loadSlots();
-
-            document.getElementById("name").value = "";
-            document.getElementById("phone").value = "";
-            document.getElementById("email").value = "";
-            document.getElementById("selectedTime").value = "";
-
-            btn.disabled = false;
-            btn.innerText = "Запази";
-        })
-        .catch(err => {
-            console.error("BOOK ERROR:", err);
-
-            btn.disabled = false;
-            btn.innerText = "Запази";
-
-            // ✅ само едно съобщение
-            showError(err.message);
-        });
-}
-
-
-/* =========================================================
-   SUMMARY UI
-   ========================================================= */
-
-function updateSummary() {
-    document.getElementById("summary").classList.remove("hidden");
-
-    document.getElementById("sumProvider").innerText =
-        document.querySelector(".provider-card.active p")?.innerText || "-";
-
-    document.getElementById("sumService").innerText =
-        document.querySelector(".service-card.active p")?.innerText || "-";
-
-    document.getElementById("sumDate").innerText =
-        document.getElementById("date").value;
-
-    document.getElementById("sumTime").innerText =
-        document.getElementById("selectedTime").value || "-";
 }
 
 
@@ -235,144 +176,126 @@ function updateSummary() {
    ========================================================= */
 
 function checkForm() {
-    const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
     const time = document.getElementById("selectedTime").value;
     const consent = document.getElementById("consent").checked;
 
-    const btn = document.querySelector(".main-btn");
-
-    if (name && phone && time && selectedProvider && consent) {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-    } else {
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
-    }
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = !(name && phone && time && selectedProvider && consent);
 }
 
-/* =========================================================
-   INPUT LISTENERS
-   ========================================================= */
-
-document.getElementById("name").addEventListener("input", checkForm);
-document.getElementById("phone").addEventListener("input", checkForm);
+["name", "phone"].forEach(id => {
+    document.getElementById(id).addEventListener("input", checkForm);
+});
 document.getElementById("consent").addEventListener("change", checkForm);
 
 
 /* =========================================================
-   SUCCESS MODAL
+   BOOK
    ========================================================= */
 
-function showSuccess() {
-    const modal = document.getElementById("successModal");
+function book() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const service = document.getElementById("service").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("selectedTime").value;
+    const consent = document.getElementById("consent").checked;
 
-    modal.classList.remove("hidden");
+    const btn = document.getElementById("submitBtn");
+    const msg = document.getElementById("ticketMsg");
+    msg.classList.add("hidden");
 
-    setTimeout(() => {
-        modal.classList.add("hidden");
-    }, 2500);
-}
-
-function closeModal() {
-    document.getElementById("successModal").classList.add("hidden");
-}
-
-// click outside modal
-document.getElementById("successModal").addEventListener("click", function (e) {
-    if (e.target === this) closeModal();
-});
-
-// ESC close
-document.addEventListener("keydown", function (e) {
-    const modal = document.getElementById("successModal");
-
-    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
-        closeModal();
+    if (!consent) {
+        showToast("Трябва да се съгласите с обработката на лични данни.", "error");
+        return;
     }
+
+    btn.disabled = true;
+    btn.textContent = "Запазване...";
+
+    fetch('/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name, phone, email, consent,
+            provider_id: selectedProvider,
+            service_id: service,
+            appointment_time: `${date}T${time}:00`
+        })
+    })
+        .then(async r => {
+            let data;
+            try { data = await r.json(); } catch { throw new Error("Сървърна грешка"); }
+            if (!r.ok) throw new Error(data.error || "Грешка");
+            return data;
+        })
+        .then(res => {
+            confirmTicket(res.id);
+            showToast("Часът е запазен успешно!");
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.textContent = "Запази часа";
+            msg.textContent = err.message;
+            msg.classList.remove("hidden");
+            showToast(err.message, "error");
+        });
+}
+
+function confirmTicket(bookingId) {
+    const ticket = document.getElementById("ticket");
+    ticket.classList.add("confirmed");
+
+    if (bookingId) {
+        document.getElementById("ticketCode").textContent =
+            "№ " + String(bookingId).padStart(6, "0");
+    }
+}
+
+function resetBooking() {
+    window.location.reload();
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function goHome() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function goToBooking() {
+    document.getElementById("providersSection").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+window.addEventListener("scroll", () => {
+    document.getElementById("nav").classList.toggle("scrolled", window.scrollY > 20);
 });
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+let toastTimer = null;
+
+function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = `toast show ${type === "error" ? "error" : ""}`;
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
+}
 
 
 /* =========================================================
    DATE PICKER (Flatpickr)
    ========================================================= */
-
-// отваря календара при focus
-document.getElementById("date").addEventListener("focus", function () {
-    this._flatpickr.open();
-});
-
-
-/* =========================================================
-   SERVICE SELECTION
-   ========================================================= */
-
-function selectService(e, id) {
-    document.querySelectorAll('.service-card')
-        .forEach(c => c.classList.remove('active'));
-
-    e.currentTarget.classList.add('active');
-
-    document.getElementById("service").value = id;
-
-    // 👉 scroll към часовете
-    document.getElementById('slots').scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-
-    // 👉 зарежда слотове (ако има всичко нужно)
-    loadSlots();
-
-    updateSummary();
-    checkForm();
-}
-
-
-
-/* =========================================================
-   NAVIGATION & SCROLL
-   ========================================================= */
-
-// scroll до booking
-function goToBooking() {
-    const selected = document.querySelector('.provider-card.active');
-    const providersSection = document.getElementById('providersSection');
-    const bookingSection = document.getElementById('bookingSection');
-
-    if (!selected) {
-        providersSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-
-        // визуален hint
-        providersSection.classList.add('highlight');
-
-        setTimeout(() => {
-            providersSection.classList.remove('highlight');
-        }, 1500);
-
-    } else {
-        bookingSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
-}
-
-// navbar scroll effect
-window.addEventListener("scroll", () => {
-    const nav = document.querySelector(".navbar");
-
-    if (window.scrollY > 30) {
-        nav.classList.add("scrolled");
-    } else {
-        nav.classList.remove("scrolled");
-    }
-});
-
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 flatpickr("#date", {
     defaultDate: "today",
@@ -383,141 +306,33 @@ flatpickr("#date", {
         firstDayOfWeek: 1,
         weekdays: {
             shorthand: ["Нед", "Пон", "Вт", "Ср", "Чет", "Пет", "Съб"],
-            longhand: [
-                "Неделя", "Понеделник", "Вторник",
-                "Сряда", "Четвъртък", "Петък", "Събота"
-            ]
+            longhand: ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
         },
         months: {
             shorthand: ["Ян", "Фев", "Мар", "Апр", "Май", "Юни", "Юли", "Авг", "Сеп", "Окт", "Ное", "Дек"],
-            longhand: [
-                "Януари", "Февруари", "Март", "Април", "Май", "Юни",
-                "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември"
-            ]
+            longhand: ["Януари", "Февруари", "Март", "Април", "Май", "Юни", "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември"]
         }
     },
 
     altInput: true,
     altFormat: "l, d F Y",
-    disableMobile: true, // 🔥 ключово
+    disableMobile: true,
 
-    onChange: function (selectedDates, dateStr) {
-        const selectedDate = selectedDates[0];
+    onChange: function (selectedDates) {
+        const d = selectedDates[0];
+        if (!d) return;
 
-        let day = selectedDate.toLocaleDateString("bg-BG", {
-            weekday: "long"
+        let day = d.toLocaleDateString("bg-BG", { weekday: "long" });
+        selectedDay = day.charAt(0).toUpperCase() + day.slice(1);
+
+        selectedDateFormatted = d.toLocaleDateString("bg-BG", {
+            year: "numeric", month: "long", day: "numeric"
         });
 
-        day = day.charAt(0).toUpperCase() + day.slice(1);
+        updateTicket();
 
-        const formatted = selectedDate.toLocaleDateString("bg-BG", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
-        document.getElementById("sumDay").innerText = day;
-        document.getElementById("sumDate").innerText = formatted;
-
-        document.querySelector('.services').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-
-        loadSlots();
-    }
-});
-
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-
-            const counters = entry.target.querySelectorAll(".counter");
-            counters.forEach(counter => {
-                if (!counter.classList.contains("started")) {
-                    counter.classList.add("started");
-                    animateCounter(counter);
-                }
-            });
-        }
-    });
-}, { threshold: 0.35 });
-
-document.querySelectorAll(".animate").forEach(el => {
-    observer.observe(el);
-});
-
-function animateCounter(el) {
-    const target = +el.getAttribute("data-target");
-    const duration = 1200; // ms
-    const startTime = performance.now();
-
-    function easeOutCubic(t) {
-        return 1 - Math.pow(1 - t, 3);
-    }
-
-    function update(now) {
-        const progress = Math.min((now - startTime) / duration, 1);
-        const eased = easeOutCubic(progress);
-
-        const value = Math.floor(eased * target);
-        el.innerText = value;
-
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        } else {
-            el.innerText = target;
-
-            // 🔥 финален bounce ефект
-            el.classList.add("counter-pop");
-            setTimeout(() => el.classList.remove("counter-pop"), 300);
+        if (document.getElementById("service").value) {
+            loadSlots();
         }
     }
-
-    requestAnimationFrame(update);
-}
-
-/* =========================================================
-   NAV ACTIVE STATE
-   ========================================================= */
-
-document.querySelectorAll('.nav-right a').forEach(link => {
-    link.addEventListener('click', function () {
-        document.querySelectorAll('.nav-right a')
-            .forEach(l => l.classList.remove('active'));
-
-        this.classList.add('active');
-    });
 });
-
-
-
-function showToast(message, type = "error") {
-    const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
-    toast.innerText = message;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => toast.classList.add("show"), 50);
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-        setTimeout(() => toast.remove(), 300);
-    }, 2500);
-}
-
-function showError(message) {
-    const modal = document.getElementById("errorModal");
-    const text = document.getElementById("errorText");
-
-    text.innerText = message;
-
-    modal.classList.remove("hidden");
-
-    setTimeout(() => {
-        modal.classList.add("hidden");
-    }, 3000);
-}
-

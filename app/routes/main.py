@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from datetime import datetime
-from app.models import Provider, Service
+from app.models import Provider
 from app.metrics import metrics_response, record_page_view
 from app.utils.time_utils import sofia_today
 
@@ -21,7 +21,6 @@ def index():
     return render_template(
         'index.html',
         providers=Provider.query.filter_by(is_active=True).all(),
-        services=Service.query.all(),
         today=sofia_today()
     )
 

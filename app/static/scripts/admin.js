@@ -240,6 +240,7 @@ function createService() {
             priceInput.value = "";
 
             loadServicesCatalog();
+            if (currentServiceProviderId) loadProviderServices();
         })
         .catch(() => alert("Грешка при добавяне"));
 }
@@ -346,6 +347,7 @@ function loadProviders() {
                         <div class="card-menu__dropdown hidden" id="cardMenu-${b.id}">
                             <button onclick="editProvider(${b.id})">✏️ Редактирай</button>
                             <button onclick="openSchedule(${b.id}, '${(b.name || '').replace(/'/g, "\\'")}')">⚙️ График</button>
+                            <button onclick="openProviderServices(${b.id}, '${(b.name || '').replace(/'/g, "\'")}')">🧾 Услуги</button>
                             <button class="danger" onclick="deleteProvider(${b.id})">🗑️ Изтрий</button>
                         </div>
                     </div>
@@ -686,7 +688,6 @@ function openSchedule(id, name) {
         });
 
     loadProviderAbsences();
-    loadProviderServices();
 }
 
 function closeScheduleModal() {
@@ -794,10 +795,36 @@ function addProviderAbsence() {
 // =====================
 // 🧾 PROVIDER <-> SERVICES (кой специалист какво предлага)
 // =====================
-function loadProviderServices() {
-    if (!currentScheduleProviderId) return;
+let currentServiceProviderId = null;
 
-    fetch(`/admin/provider/${currentScheduleProviderId}/services`)
+function openProviderServices(id, name) {
+    currentServiceProviderId = id;
+    document.getElementById("providerServicesProviderName").innerText = name;
+    document.getElementById("providerServicesModal").classList.remove("hidden");
+    loadProviderServices();
+}
+
+function closeProviderServicesModal() {
+    document.getElementById("providerServicesModal").classList.add("hidden");
+    currentServiceProviderId = null;
+}
+
+function loadProviderServices() {
+    if (!currentServiceProviderId) return;
+
+    // Ensure the catalog is available before building the dropdown.
+    if (!Array.isArray(servicesCatalog) || servicesCatalog.length === 0) {
+        fetch('/admin/services')
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) servicesCatalog = data;
+                loadProviderServices();
+            })
+            .catch(() => alert("Грешка при зареждане на услугите"));
+        return;
+    }
+
+    fetch(`/admin/provider/${currentServiceProviderId}/services`)
         .then(r => r.json())
         .then(list => {
             renderProviderServicesList(Array.isArray(list) ? list : []);
@@ -856,7 +883,7 @@ function renderAddServiceDropdown(assignedList) {
 }
 
 function addProviderService() {
-    if (!currentScheduleProviderId) return;
+    if (!currentServiceProviderId) return;
 
     const select = document.getElementById("addServiceSelect");
     const serviceId = select.value;
@@ -869,7 +896,7 @@ function addProviderService() {
     const price = document.getElementById("addServicePrice").value.trim();
     const duration = document.getElementById("addServiceDuration").value.trim();
 
-    fetch(`/admin/provider/${currentScheduleProviderId}/services`, {
+    fetch(`/admin/provider/${currentServiceProviderId}/services`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -892,12 +919,12 @@ function addProviderService() {
 }
 
 function saveProviderServiceOverride(serviceId) {
-    if (!currentScheduleProviderId) return;
+    if (!currentServiceProviderId) return;
 
     const price = document.getElementById(`ovPrice-${serviceId}`).value.trim();
     const duration = document.getElementById(`ovDuration-${serviceId}`).value.trim();
 
-    fetch(`/admin/provider/${currentScheduleProviderId}/services/${serviceId}`, {
+    fetch(`/admin/provider/${currentServiceProviderId}/services/${serviceId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -914,10 +941,10 @@ function saveProviderServiceOverride(serviceId) {
 }
 
 function removeProviderService(serviceId) {
-    if (!currentScheduleProviderId) return;
+    if (!currentServiceProviderId) return;
     if (!confirm("Премахване на тази услуга от специалиста?")) return;
 
-    fetch(`/admin/provider/${currentScheduleProviderId}/services/${serviceId}`, { method: 'DELETE' })
+    fetch(`/admin/provider/${currentServiceProviderId}/services/${serviceId}`, { method: 'DELETE' })
         .then(() => loadProviderServices())
         .catch(() => alert("Грешка при премахване"));
 }

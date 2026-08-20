@@ -159,6 +159,38 @@
     <img id="preview" class="img-preview">
     <button onclick="createProvider()" class="btn btn--primary">Добави специалист</button>
   </section>
+  <!-- ═══ PROVIDER SERVICES MODAL ═══ -->
+  <div id="providerServicesModal" class="modal hidden">
+    <div class="modal-content" style="max-width:560px; text-align:left; max-height:85vh; overflow-y:auto;">
+      <h2>Услуги — <span id="providerServicesProviderName"></span></h2>
+
+      <div style="margin-top:16px;">
+        <div id="providerServicesList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <hr style="margin:20px 0; border-color: var(--border);">
+
+      <h3 style="margin-bottom:10px;">Добави услуга</h3>
+      <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr;">
+        <div class="field">
+          <label class="field__label">Услуга</label>
+          <select id="addServiceSelect" class="field__input"></select>
+        </div>
+        <div class="field">
+          <label class="field__label">Цена</label>
+          <input id="addServicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="от каталога">
+        </div>
+        <div class="field">
+          <label class="field__label">Мин.</label>
+          <input id="addServiceDuration" type="number" min="5" step="5" class="field__input" placeholder="от каталога">
+        </div>
+      </div>
+
+      <button class="btn btn--primary" style="margin-top:10px;" onclick="addProviderService()">Добави услуга</button>
+      <button class="btn" style="margin-top:10px;" onclick="closeProviderServicesModal()">Затвори</button>
+    </div>
+  </div>
+
   <div id="scheduleModal" class="modal hidden">
     <div class="modal-content" style="max-width:480px; text-align:left; max-height:85vh; overflow-y:auto;">
       <h2>График — <span id="scheduleProviderName"></span></h2>
@@ -197,28 +229,6 @@
       </div>
 
       <button class="btn btn--primary" onclick="saveProviderSchedule()">Запази график</button>
-
-      <hr style="margin:20px 0; border-color: var(--border);">
-
-      <h3 style="margin-bottom:10px;">Услуги, които предлага</h3>
-      <div id="providerServicesList" style="display:flex; flex-direction:column; gap:8px;"></div>
-
-      <div class="form-grid" style="margin-top:14px; grid-template-columns: 2fr 1fr 1fr;">
-        <div class="field">
-          <label class="field__label">Услуга</label>
-          <select id="addServiceSelect" class="field__input"></select>
-        </div>
-        <div class="field">
-          <label class="field__label">Цена (по избор)</label>
-          <input id="addServicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="от каталога">
-        </div>
-        <div class="field">
-          <label class="field__label">Мин. (по избор)</label>
-          <input id="addServiceDuration" type="number" min="5" step="5" class="field__input" placeholder="от каталога">
-        </div>
-      </div>
-
-      <button class="btn btn--primary" style="margin-top:10px;" onclick="addProviderService()">Добави услуга</button>
 
       <hr style="margin:20px 0; border-color: var(--border);">
 

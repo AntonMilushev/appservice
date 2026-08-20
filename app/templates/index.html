@@ -2,302 +2,200 @@
 <html lang="bg">
 
 <head>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-Y0CVVG8G36');
-    </script>
-
     <meta charset="UTF-8">
-    <title>БръснаряТ</title>
+    <!-- ✏️ EDIT: заглавие на таба -->
+    <title>Provider App — Запази час</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <meta name="description" content="Запази час онлайн за няколко секунди.">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="manifest" href="/static/manifest-client.json">
-
-
-    <meta property="og:title" content="БръснаряТ | Запази час онлайн">
-    <meta property="og:description" content="Стил. Класа. Прецизност. Запази час онлайн.">
-
-    <meta property="og:image" content="https://brusnarqt.com/static/preview-fb.jpg?v=20">
-    <meta property="og:image:secure_url" content="https://brusnarqt.com/static/preview-fb.jpg?v=20">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <meta property="og:url" content="https://brusnarqt.com/">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="bg_BG">
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-container">
 
-            <div class="nav-left">
-                <div class="logo" onclick="goHome()">
-                    <img src="/static/images/barbericon.jpg" alt="logo">
-                    <span>Сайт за Услуги</span>
-                </div>
-            </div>
+    <!-- ═══ NAV ═══ -->
+    <nav class="nav" id="nav">
+        <div class="nav__inner">
+            <!-- ✏️ EDIT: марка/лого -->
+            <button class="nav__brand" onclick="goHome()">
+                <span class="nav__mark">PA</span>
+                <span>Provider App</span>
+            </button>
 
-            <div class="nav-right">
-                <a href="#" onclick="goHome()">Начало</a>
-                <a href="#about">За нас</a>
-                <a href="#pricing-section">Цени</a>
-                <a href="#" onclick="goToBooking()">Резервация</a>
-                <a href="#contact">Контакти</a>
-            </div>
+            <ul class="nav__links">
+                <li><a href="#how">Как работи</a></li>
+                <li><a href="#footer">Контакти</a></li>
+            </ul>
 
+            <button class="nav__cta" onclick="goToBooking()">Запази час</button>
         </div>
-    </div>
+    </nav>
 
-    <div class="hero">
-        <video autoplay muted loop playsinline class="hero-video">
-            <source src="{{ url_for('static', filename='videos/barbershopvideo1.mp4') }}" type="video/mp4">
-        </video>
+    <!-- ═══ HERO ═══ -->
+    <header class="hero">
+        <div>
+            <p class="eyebrow hero__eyebrow">ОНЛАЙН РЕЗЕРВАЦИИ · ЗА СЕКУНДИ</p>
 
-        <div class="hero-overlay">
-            <h1>
-                <span class="icon">💈</span>
-                <span class="title-text">Услуги</span>
-            </h1>
-            <p>Твоята нужда. Нашата цел</p>
-        </div>
-    </div>
-    <section id="about" class="about-section">
+            <!-- ✏️ EDIT: главно послание -->
+            <h1>Запази <em>своя</em><br>час.</h1>
 
-        <div class="about-container">
+            <p class="hero__sub">
+                Избери специалист, услуга и удобно за теб време —
+                билетът ти се попълва в движение и се потвърждава веднага.
+            </p>
 
-            <div class="about-text animate">
-
-                <h2>💈 За нас</h2>
-
-                <p class="about-intro">
-                    Нещо за нас
-                </p>
-
-
-
-                <p>
-                    и тук пишем нещо за нас
-                </p>
-
-                <div class="about-highlight">
-                    и още
-                </div>
-
-            </div>
-
-            <div class="about-features animate delay-1">
-                <div>✔️ Професионализъм</div>
-                <div>✔️ Премиум обслужване</div>
-                <div>✔️ Модерен стил</div>
-            </div>
-
-            <div class="about-stats animate delay-2">
-                <div>🔥 <span class="counter" data-target="1000">0</span>+ клиенти</div>
-                <div>⭐ <span class="counter" data-target="5">0</span>.0 рейтинг</div>
+            <div class="hero__actions">
+                <button class="btn-primary" onclick="goToBooking()">Избери специалист →</button>
+                <span class="hero__meta">
+                    {% if providers|length == 1 %}1 специалист наличен{% else %}{{ providers|length }} специалисти
+                    налични{% endif %}
+                </span>
             </div>
         </div>
 
-    </section>
+        <div class="hero__stub" aria-hidden="true">
+            <div class="hero__stub-row"><span>СПЕЦИАЛИСТ</span><b>—</b></div>
+            <div class="hero__stub-row"><span>УСЛУГА</span><b>—</b></div>
+            <div class="hero__stub-row"><span>ДАТА · ЧАС</span><b>—</b></div>
+        </div>
+    </header>
 
-    <section id="pricing-section" class="pricing-section">
+    <!-- ═══ BOOKING ═══ -->
+    <main class="booking" id="how">
 
-        <div class="pricing-container">
+        <div class="steps">
 
-            <!-- MASTER -->
-            <div class="pricing-card">
-                <div class="pricing-header red">
-                    Master Barber
+            <!-- 01 SPECIALIST -->
+            <section id="providersSection">
+                <div class="step__head">
+                    <span class="step__num">01</span>
+                    <h2 class="step__title">Специалист</h2>
                 </div>
 
-                <div class="pricing-list">
-                    <div class="item">
-                        <span>Мъжко подстригване(Master Barber)</span>
-                        <span>20€</span>
+                <div class="providers">
+                    {% for p in providers %}
+                    <div class="provider-card" onclick="selectProvider(event, {{ p.id }})">
+                        <img src="{{ p.image if p.image else url_for('static', filename='default.png') }}"
+                            alt="{{ p.name }}">
+                        <p class="provider-name">{{ p.name }}</p>
                     </div>
-                    <div class="item">
-                        <span>Детско подстригване(Master Barber)</span>
-                        <span>15€</span>
-                    </div>
-                    <div class="item">
-                        <span>Баща и син</span>
-                        <span>30€</span>
-                    </div>
-                    <div class="item">
-                        <span>Мъжка подстрижка + оформяне на брада</span>
-                        <span>25€</span>
-                    </div>
+                    {% endfor %}
                 </div>
-            </div>
+            </section>
 
-            <!-- SENIOR -->
-            <div class="pricing-card">
-                <div class="pricing-header blue">
-                    Senior Barber
+            <!-- 02 SERVICE -->
+            <section>
+                <div class="step__head">
+                    <span class="step__num">02</span>
+                    <h2 class="step__title">Услуга</h2>
                 </div>
 
-                <div class="pricing-list">
-                    <div class="item">
-                        <span>Мъжко подстригване</span>
-                        <span>18 €</span>
+                <div class="services" id="services">
+                    <p class="services-placeholder">Първо избери специалист</p>
+                </div>
+                <input type="hidden" id="service">
+            </section>
+
+            <!-- 03 DATE + TIME -->
+            <section>
+                <div class="step__head">
+                    <span class="step__num">03</span>
+                    <h2 class="step__title">Дата и час</h2>
+                </div>
+
+                <input type="date" id="date" placeholder="Избери дата">
+
+                <div id="slots" class="slots-grid"></div>
+                <input type="hidden" id="selectedTime">
+            </section>
+
+            <!-- 04 DETAILS -->
+            <section>
+                <div class="step__head">
+                    <span class="step__num">04</span>
+                    <h2 class="step__title">Данни за връзка</h2>
+                </div>
+
+                <div class="form-fields">
+                    <input id="name" placeholder="Име">
+                    <input id="phone" placeholder="Телефон">
+                    <input id="email" placeholder="Email (по избор)">
+
+                    <label class="consent-row">
+                        <input type="checkbox" id="consent">
+                        <span class="consent-box"></span>
+                        <span class="consent-text">
+                            Съгласен съм личните ми данни да бъдат обработвани съгласно
+                            <a href="/privacy-policy" target="_blank">Политиката за поверителност</a>
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- 🎫 TICKET RAIL -->
+        <aside class="ticket-rail">
+            <div class="ticket" id="ticket">
+                <div class="ticket__head">
+                    <span class="eyebrow">Твоят билет</span>
+                    <span class="ticket__code" id="ticketCode">№ ————</span>
+                </div>
+
+                <div class="ticket__perf"></div>
+
+                <div class="ticket__body">
+                    <div class="ticket__row">
+                        <span class="ticket__label">Специалист</span>
+                        <span class="ticket__value muted" id="ticketProvider">—</span>
                     </div>
-                    <div class="item">
-                        <span>Детско подстригване</span>
-                        <span>15 €</span>
+                    <div class="ticket__row">
+                        <span class="ticket__label">Услуга</span>
+                        <span class="ticket__value muted" id="ticketService">—</span>
                     </div>
-                    <div class="item">
-                        <span>Баща и син</span>
-                        <span>28€</span>
+                    <div class="ticket__row">
+                        <span class="ticket__label">Дата</span>
+                        <span class="ticket__value muted" id="ticketDate">—</span>
                     </div>
-                    <div class="item">
-                        <span>Мъжка подстрижка + оформяне на брада</span>
-                        <span>23€</span>
+                    <div class="ticket__row">
+                        <span class="ticket__label">Час</span>
+                        <span class="ticket__value muted" id="ticketTime">—</span>
                     </div>
                 </div>
-            </div>
 
-        </div>
+                <div class="ticket__perf"></div>
 
-    </section>
+                <div class="ticket__foot">
+                    <div class="ticket__price">
+                        <span class="ticket__price-label">Цена</span>
+                        <span class="ticket__price-value" id="ticketPrice">—</span>
+                    </div>
 
-    <div class="container">
+                    <button class="btn-submit" id="submitBtn" onclick="book()" disabled>Запази часа</button>
+                    <button class="ticket__reset" onclick="resetBooking()">Запази нов час</button>
 
-        <div class="providers" id="providersSection">
-            {% for p in providers %}
-            <div class="provider-card" onclick="selectProvider(event, {{p.id}})">
-
-                <img src="{{ p.image if p.image else url_for('static', filename='default.png') }}">
-
-                <p class="provider-name">{{ p.name }}</p>
-
-            </div>
-            {% endfor %}
-        </div>
-        <div id="bookingSection" class="disabled">
-
-            <div class="booking-lock">
-                <p>👆 Избери специалист, за да продължиш</p>
-            </div>
-
-            <!-- 📅 ДАТА -->
-            <label class="input-label">📅 Дата</label>
-            <input type="date" id="date" placeholder="Избери дата">
-
-            <!-- ✂️ УСЛУГА -->
-            <h3>✂️ Избери услуга</h3>
-            <div class="services">
-                {% for s in services %}
-                <div class="service-card" onclick="selectService(event, {{s.id}})">
-                    <p>{{s.name}}</p>
+                    <p class="ticket__inline-msg hidden" id="ticketMsg"></p>
                 </div>
-                {% endfor %}
+
+                <div class="ticket__stamp" id="ticketStamp">ПОТВЪРДЕНО<br>✓</div>
             </div>
-            <input type="hidden" id="service">
+        </aside>
 
-            <!-- 🕒 ЧАСОВЕ -->
-            <h3>🕒 Свободни часове</h3>
-            <div id="slots" class="slots-grid"></div>
-            <input type="hidden" id="selectedTime">
+    </main>
 
-            <!-- 👤 ДАННИ -->
-            <h3>👤 Данни</h3>
-            <input id="name" placeholder="Име">
-            <input id="phone" placeholder="Телефон">
-            <input id="email" placeholder="Email">
-            <div class="consent-wrapper">
-                <label class="consent-label">
-                    <input type="checkbox" id="consent">
-
-                    <span class="consent-box"></span>
-
-                    <span class="consent-text">
-                        Съгласен съм личните ми данни да бъдат обработвани
-                        <a href="/privacy-policy" target="_blank">Политика</a>
-                    </span>
-                </label>
-            </div>
-
-            <!-- 📋 SUMMARY -->
-            <div id="summary" class="summary hidden">
-                <h3>📋 Резервация</h3>
-                <p><strong>Специалист:</strong> <span id="sumProvider">-</span></p>
-                <p><strong>Услуга:</strong> <span id="sumService">-</span></p>
-                <p><strong>Дата:</strong> <span id="sumDate">-</span></p>
-                <p><strong>Ден:</strong> <span id="sumDay">-</span></p>
-                <p><strong>Час:</strong> <span id="sumTime">-</span></p>
-            </div>
-
-            <!-- 🔘 BUTTON -->
-            <button class="main-btn" onclick="book()">Запази</button>
-
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer" id="footer">
+        <div class="footer__inner">
+            <!-- ✏️ EDIT: контакти -->
+            <span>Provider App © {{ today.year }}</span>
+            <a href="/privacy-policy">Политика за поверителност</a>
         </div>
-    </div>
+    </footer>
 
-    <div id="contact" class="contact">
-        <h2>📍 Контакти</h2>
+    <div class="toast" id="toast"></div>
 
-        <div class="contact-grid">
-            <div>
-                <h4>Адрес</h4>
-                <p>гр.София 💈ул.Подпоручик Футеков 1 (до метростанция Бели Дунав , срещу Била)</p>
-            </div>
-
-            <div>
-                <h4>Телефон</h4>
-                <p>📞 0876515172</p>
-            </div>
-
-            <div>
-                <h4>Работно време</h4>
-                <p>Вторник - Съб: 10:00 - 19:00</p>
-            </div>
-            <div>
-                <h4>Социални мрежи</h4>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/profile.php?id=61552946242281" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/brusnarqt/?hl=en" target="_blank">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@kostadinbarber" target="_blank">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="successModal" class="modal hidden">
-        <div class="modal-content">
-            <h2>✅ Успешна резервация!</h2>
-            <p>Ще получиш SMS за потвърждение.</p>
-
-            <button onclick="closeModal()">OK</button>
-        </div>
-    </div>
-    <div id="errorModal" class="modal hidden">
-        <div class="modal-content error">
-            <h2>Грешка</h2>
-            <p id="errorText">Нещо се обърка</p>
-        </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 </body>
