@@ -341,10 +341,10 @@ body::before {
 
 
 /* =========================================================
-   BARBER CARDS
+   PROVIDER CARDS
    ========================================================= */
 
-.barbers {
+.providers {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 20px;
@@ -352,7 +352,7 @@ body::before {
 }
 
 /* card */
-.barber-card {
+.provider-card {
     background: rgba(255, 255, 255, 0.06);
     border-radius: 16px;
     border: 1px solid var(--border);
@@ -369,7 +369,7 @@ body::before {
 }
 
 /* image */
-.barber-card img {
+.provider-card img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
@@ -378,28 +378,28 @@ body::before {
 }
 
 /* hover */
-.barber-card:hover {
+.provider-card:hover {
     transform: translateY(-6px) scale(1.03);
     border-color: var(--primary);
     box-shadow: 0 20px 40px rgba(212, 175, 55, 0.25);
 }
 
 /* active */
-.barber-card.active {
+.provider-card.active {
     border: 2px solid var(--primary);
     box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
     transform: scale(1.05);
 }
 
 /* name */
-.barber-name {
+.provider-name {
     font-family: 'Playfair Display', serif;
     font-size: 20px;
     font-weight: 600;
 }
 
 /* role */
-.barber-role {
+.provider-role {
     font-size: 15px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -1170,22 +1170,22 @@ img {
         letter-spacing: 1px;
     }
 
-    /* ================= BARBERS ================= */
-    .barbers {
+    /* ================= PROVIDERS ================= */
+    .providers {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
-    .barber-card {
+    .provider-card {
         padding: 10px;
         border-radius: 14px;
     }
 
-    .barber-name {
+    .provider-name {
         font-size: 16px;
     }
 
-    .barber-role {
+    .provider-role {
         font-size: 11px;
     }
 
@@ -1257,7 +1257,7 @@ img {
     button,
     .service-card,
     .slot,
-    .barber-card {
+    .provider-card {
         min-height: 44px;
         transition: all 0.2s ease;
     }

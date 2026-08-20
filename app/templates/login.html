@@ -34,7 +34,7 @@
             .then(r => r.json())
             .then(res => {
                 if (res.message) {
-                    window.location = res.role === "ADMIN" ? "/admin" : "/barber";
+                    window.location = res.redirect || (res.role === "ADMIN" ? "/admin" : "/provider");
                 } else {
                     alert(res.error || "Грешка при вход");
                 }

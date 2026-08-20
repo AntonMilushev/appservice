@@ -62,13 +62,13 @@ function load() {
 
             container.innerHTML = `
                 <div class="schedule-grid">
-                    ${data.map(barber => {
+                    ${data.map(provider => {
 
-                const workStart = barber.working_start || "09:00";
-                const workEnd = barber.working_end || "19:00";
+                const workStart = provider.working_start || "09:00";
+                const workEnd = provider.working_end || "19:00";
 
                 // ✅ времена на съществуващите резервации за този барбър
-                const bookingTimes = barber.bookings
+                const bookingTimes = provider.bookings
                     .filter(b => b.time && b.time.split(" ")[0] === date)
                     .map(b => b.time.split(" ")[1].substring(0, 5));
 
@@ -76,8 +76,8 @@ function load() {
                 const hours = buildHourRange(workStart, workEnd, bookingTimes);
 
                 return `
-                        <div class="barber-column">
-                            <h3>${barber.barber}</h3>
+                        <div class="provider-column">
+                            <h3>${provider.provider}</h3>
 
                             ${hours.map(hour => {
 
@@ -88,7 +88,7 @@ function load() {
                     const isPast = slotTime < now;
 
                     // ✅ филтър по дата + час
-                    const bookingsForSlot = barber.bookings.filter(b => {
+                    const bookingsForSlot = provider.bookings.filter(b => {
                         if (!b.time) return false;
 
                         const datePart = b.time.split(" ")[0];
@@ -165,15 +165,171 @@ function deleteBooking(id) {
 
 
 // =====================
-// 👨‍🦱 BARBERS CRUD
+// 🧾 SERVICES CATALOG
 // =====================
-function loadBarbers() {
-    fetch('/admin/barbers')
+let servicesCatalog = [];
+
+function loadServicesCatalog() {
+    fetch('/admin/services')
         .then(r => r.json())
         .then(data => {
             if (!Array.isArray(data)) return;
 
-            const container = document.getElementById("barbers");
+            servicesCatalog = data;
+
+            const container = document.getElementById("services");
+            if (!container) return;
+
+            if (data.length === 0) {
+                container.innerHTML = "<p style='color:var(--text-sub);font-size:12px;'>Няма добавени услуги</p>";
+                return;
+            }
+
+            container.innerHTML = data.map(s => `
+                <div class="card">
+                    <h3>${s.name}${s.is_active ? "" : " <span style='color:var(--text-muted);font-size:11px;'>(неактивна)</span>"}</h3>
+                    <p style="font-size:12px;color:var(--text-sub);margin-bottom:4px;">⏱ ${s.duration_minutes} мин</p>
+                    <p style="font-size:13px;color:var(--gold);font-weight:600;">${s.price !== null ? s.price + " лв." : "без цена"}</p>
+
+                    <div class="card-menu">
+                        <button class="card-menu__trigger" onclick="toggleCardMenu(event, 's-${s.id}')">⋮</button>
+                        <div class="card-menu__dropdown hidden" id="cardMenu-s-${s.id}">
+                            <button onclick="editService(${s.id})">✏️ Редактирай</button>
+                            <button onclick="toggleServiceActive(${s.id})">${s.is_active ? "🚫 Деактивирай" : "✅ Активирай"}</button>
+                            <button class="danger" onclick="deleteService(${s.id})">🗑️ Изтрий</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        })
+        .catch(() => console.error("Services load error"));
+}
+
+function createService() {
+    const nameInput = document.getElementById("serviceName");
+    const durationInput = document.getElementById("serviceDuration");
+    const priceInput = document.getElementById("servicePrice");
+
+    const name = nameInput.value.trim();
+    const duration = durationInput.value.trim();
+    const price = priceInput.value.trim();
+
+    if (!name || !duration) {
+        alert("Име и времетраене са задължителни!");
+        return;
+    }
+
+    fetch('/admin/services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name,
+            duration_minutes: duration,
+            price: price === "" ? null : price
+        })
+    })
+        .then(res => res.json())
+        .then(res => {
+            if (res.error) {
+                alert(res.error);
+                return;
+            }
+
+            nameInput.value = "";
+            durationInput.value = "";
+            priceInput.value = "";
+
+            loadServicesCatalog();
+        })
+        .catch(() => alert("Грешка при добавяне"));
+}
+
+let currentEditServiceId = null;
+
+function editService(id) {
+    const service = servicesCatalog.find(s => s.id === id);
+    if (!service) return;
+
+    currentEditServiceId = id;
+
+    document.getElementById("editServiceName").value = service.name;
+    document.getElementById("editServiceDuration").value = service.duration_minutes;
+    document.getElementById("editServicePrice").value = service.price !== null ? service.price : "";
+    document.getElementById("editServiceActive").checked = service.is_active;
+
+    document.getElementById("serviceModal").classList.remove("hidden");
+}
+
+function closeServiceModal() {
+    document.getElementById("serviceModal").classList.add("hidden");
+    currentEditServiceId = null;
+}
+
+function saveServiceEdit() {
+    if (!currentEditServiceId) return;
+
+    const name = document.getElementById("editServiceName").value.trim();
+    const duration = document.getElementById("editServiceDuration").value.trim();
+    const price = document.getElementById("editServicePrice").value.trim();
+    const isActive = document.getElementById("editServiceActive").checked;
+
+    if (!name || !duration) {
+        alert("Име и времетраене са задължителни!");
+        return;
+    }
+
+    fetch(`/admin/services/${currentEditServiceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name,
+            duration_minutes: duration,
+            price: price === "" ? null : price,
+            is_active: isActive
+        })
+    })
+        .then(r => r.json())
+        .then(res => {
+            if (res.error) { alert(res.error); return; }
+            closeServiceModal();
+            loadServicesCatalog();
+        })
+        .catch(() => alert("Грешка при запис"));
+}
+
+function toggleServiceActive(id) {
+    const service = servicesCatalog.find(s => s.id === id);
+    if (!service) return;
+
+    fetch(`/admin/services/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !service.is_active })
+    })
+        .then(() => loadServicesCatalog())
+        .catch(() => alert("Грешка при запис"));
+}
+
+function deleteService(id) {
+    if (!confirm("Изтриването на услугата ще я премахне и от всички специалисти, които я предлагат. Продължи?")) return;
+
+    fetch(`/admin/services/${id}`, { method: 'DELETE' })
+        .then(() => loadServicesCatalog())
+        .catch(() => alert("Грешка при изтриване"));
+}
+
+
+
+// =====================
+// 👨‍🦱 PROVIDERS CRUD
+// =====================
+function loadProviders() {
+    fetch('/admin/providers')
+        .then(r => r.json())
+        .then(data => {
+            if (!Array.isArray(data)) return;
+
+            const container = document.getElementById("providers");
             if (!container) return;
 
             container.innerHTML = data.map(b => `
@@ -188,15 +344,15 @@ function loadBarbers() {
                     <div class="card-menu">
                         <button class="card-menu__trigger" onclick="toggleCardMenu(event, ${b.id})">⋮</button>
                         <div class="card-menu__dropdown hidden" id="cardMenu-${b.id}">
-                            <button onclick="editBarber(${b.id})">✏️ Редактирай</button>
+                            <button onclick="editProvider(${b.id})">✏️ Редактирай</button>
                             <button onclick="openSchedule(${b.id}, '${(b.name || '').replace(/'/g, "\\'")}')">⚙️ График</button>
-                            <button class="danger" onclick="deleteBarber(${b.id})">🗑️ Изтрий</button>
+                            <button class="danger" onclick="deleteProvider(${b.id})">🗑️ Изтрий</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         })
-        .catch(() => console.error("Barbers load error"));
+        .catch(() => console.error("Providers load error"));
 }
 
 // =====================
@@ -219,7 +375,7 @@ document.addEventListener("click", () => {
 });
 
 // ➕ CREATE
-function createBarber() {
+function createProvider() {
     const nameInput = document.getElementById("name");
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
@@ -241,7 +397,7 @@ function createBarber() {
         return;
     }
 
-    fetch('/admin/barber', {
+    fetch('/admin/provider', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -258,7 +414,7 @@ function createBarber() {
                 return;
             }
 
-            alert("Барбър създаден успешно!");
+            alert("Специалистът е създаден успешно!");
 
             // 🔥 reset form
             nameInput.value = "";
@@ -272,34 +428,34 @@ function createBarber() {
                 preview.src = "";
             }
 
-            loadBarbers();
+            loadProviders();
         })
         .catch(() => alert("Грешка при добавяне"));
 }
 
 // ✏️ UPDATE
-function editBarber(id) {
+function editProvider(id) {
     const name = prompt("Ново име:");
     if (!name) return;
 
-    fetch(`/admin/barber/${id}`, {
+    fetch(`/admin/provider/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
     })
-        .then(loadBarbers)
+        .then(loadProviders)
         .catch(() => alert("Грешка при редакция"));
 }
 
 
 // ❌ DELETE
-function deleteBarber(id) {
+function deleteProvider(id) {
     if (!confirm("Сигурен ли си?")) return;
 
-    fetch(`/admin/barber/${id}`, {
+    fetch(`/admin/provider/${id}`, {
         method: 'DELETE'
     })
-        .then(loadBarbers)
+        .then(loadProviders)
         .catch(() => alert("Грешка при изтриване"));
 }
 
@@ -502,19 +658,20 @@ window.onload = function () {
     resetTimer();
     initUpload();
     load();
-    loadBarbers();
+    loadProviders();
+    loadServicesCatalog();
     loadSmsLogs(1);
 };
 
 
-let currentScheduleBarberId = null;
+let currentScheduleProviderId = null;
 
 function openSchedule(id, name) {
-    currentScheduleBarberId = id;
-    document.getElementById("scheduleBarberName").innerText = name;
+    currentScheduleProviderId = id;
+    document.getElementById("scheduleProviderName").innerText = name;
     document.getElementById("scheduleModal").classList.remove("hidden");
 
-    fetch(`/admin/barber/${id}/settings`)
+    fetch(`/admin/provider/${id}/settings`)
         .then(r => r.json())
         .then(data => {
             setSelectedDays("schWorkingDaysPicker", data.working_days || "");
@@ -528,20 +685,21 @@ function openSchedule(id, name) {
             document.getElementById("schBreakEnd").value = data.break_end || "";
         });
 
-    loadBarberAbsences();
+    loadProviderAbsences();
+    loadProviderServices();
 }
 
 function closeScheduleModal() {
     document.getElementById("scheduleModal").classList.add("hidden");
-    currentScheduleBarberId = null;
+    currentScheduleProviderId = null;
 }
 
-function saveBarberSchedule() {
-    if (!currentScheduleBarberId) return;
+function saveProviderSchedule() {
+    if (!currentScheduleProviderId) return;
 
     const hasBreak = document.getElementById("schBreakToggle").checked;
 
-    fetch(`/admin/barber/${currentScheduleBarberId}/settings`, {
+    fetch(`/admin/provider/${currentScheduleProviderId}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -560,10 +718,10 @@ function saveBarberSchedule() {
         .catch(() => alert("Грешка при запис"));
 }
 
-function loadBarberAbsences() {
-    if (!currentScheduleBarberId) return;
+function loadProviderAbsences() {
+    if (!currentScheduleProviderId) return;
 
-    fetch(`/admin/barber/${currentScheduleBarberId}/absences`)
+    fetch(`/admin/provider/${currentScheduleProviderId}/absences`)
         .then(r => r.json())
         .then(list => {
             const container = document.getElementById("absenceList");
@@ -588,8 +746,8 @@ function loadBarberAbsences() {
         });
 }
 
-function addBarberAbsence() {
-    if (!currentScheduleBarberId) return;
+function addProviderAbsence() {
+    if (!currentScheduleProviderId) return;
 
     const start = document.getElementById("absStart").value;
     const end = document.getElementById("absEnd").value || start;
@@ -600,7 +758,7 @@ function addBarberAbsence() {
         return;
     }
 
-    fetch(`/admin/barber/${currentScheduleBarberId}/absences`, {
+    fetch(`/admin/provider/${currentScheduleProviderId}/absences`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -628,16 +786,148 @@ function addBarberAbsence() {
             document.getElementById("absPartialToggle").checked = false;
             document.getElementById("absPartialFields").classList.add("hidden");
 
-            loadBarberAbsences();
+            loadProviderAbsences();
         })
         .catch(err => alert(err.message));
 }
+
+// =====================
+// 🧾 PROVIDER <-> SERVICES (кой специалист какво предлага)
+// =====================
+function loadProviderServices() {
+    if (!currentScheduleProviderId) return;
+
+    fetch(`/admin/provider/${currentScheduleProviderId}/services`)
+        .then(r => r.json())
+        .then(list => {
+            renderProviderServicesList(Array.isArray(list) ? list : []);
+            renderAddServiceDropdown(Array.isArray(list) ? list : []);
+        });
+}
+
+function renderProviderServicesList(list) {
+    const container = document.getElementById("providerServicesList");
+    if (!container) return;
+
+    if (list.length === 0) {
+        container.innerHTML = "<p style='color:var(--text-sub);font-size:12px;'>Специалистът все още не предлага услуги</p>";
+        return;
+    }
+
+    container.innerHTML = list.map(link => `
+        <div class="card" style="width:100%; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>${link.service_name}</strong>
+                <button class="delete" onclick="removeProviderService(${link.service_id})">🗑</button>
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <div class="field" style="margin:0;">
+                    <label class="field__label">Цена</label>
+                    <input type="number" min="0" step="0.01" class="field__input" style="width:100px;"
+                        id="ovPrice-${link.service_id}" value="${link.price !== null ? link.price : ''}">
+                </div>
+                <div class="field" style="margin:0;">
+                    <label class="field__label">Мин.</label>
+                    <input type="number" min="5" step="5" class="field__input" style="width:90px;"
+                        id="ovDuration-${link.service_id}" value="${link.duration_minutes !== null ? link.duration_minutes : ''}">
+                </div>
+                <button class="btn btn--primary" style="padding:9px 14px;" onclick="saveProviderServiceOverride(${link.service_id})">Запази</button>
+            </div>
+            <span style="font-size:11px;color:var(--text-sub); display:block; margin-top:6px;">
+                ${link.price_overridden || link.duration_overridden ? "Override спрямо каталога" : "По подразбиране от каталога"}
+            </span>
+        </div>
+    `).join('');
+}
+
+function renderAddServiceDropdown(assignedList) {
+    const select = document.getElementById("addServiceSelect");
+    if (!select) return;
+
+    const assignedIds = assignedList.map(l => l.service_id);
+    const available = servicesCatalog.filter(s => !assignedIds.includes(s.id));
+
+    if (available.length === 0) {
+        select.innerHTML = `<option value="">Всички услуги вече са добавени</option>`;
+        return;
+    }
+
+    select.innerHTML = available.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+}
+
+function addProviderService() {
+    if (!currentScheduleProviderId) return;
+
+    const select = document.getElementById("addServiceSelect");
+    const serviceId = select.value;
+
+    if (!serviceId) {
+        alert("Няма избрана услуга");
+        return;
+    }
+
+    const price = document.getElementById("addServicePrice").value.trim();
+    const duration = document.getElementById("addServiceDuration").value.trim();
+
+    fetch(`/admin/provider/${currentScheduleProviderId}/services`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            service_id: serviceId,
+            price: price === "" ? null : price,
+            duration_minutes: duration === "" ? null : duration
+        })
+    })
+        .then(async r => {
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.error || "Грешка");
+            return data;
+        })
+        .then(() => {
+            document.getElementById("addServicePrice").value = "";
+            document.getElementById("addServiceDuration").value = "";
+            loadProviderServices();
+        })
+        .catch(err => alert(err.message));
+}
+
+function saveProviderServiceOverride(serviceId) {
+    if (!currentScheduleProviderId) return;
+
+    const price = document.getElementById(`ovPrice-${serviceId}`).value.trim();
+    const duration = document.getElementById(`ovDuration-${serviceId}`).value.trim();
+
+    fetch(`/admin/provider/${currentScheduleProviderId}/services/${serviceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            price: price === "" ? null : price,
+            duration_minutes: duration === "" ? null : duration
+        })
+    })
+        .then(r => r.json())
+        .then(res => {
+            if (res.error) { alert(res.error); return; }
+            loadProviderServices();
+        })
+        .catch(() => alert("Грешка при запис"));
+}
+
+function removeProviderService(serviceId) {
+    if (!currentScheduleProviderId) return;
+    if (!confirm("Премахване на тази услуга от специалиста?")) return;
+
+    fetch(`/admin/provider/${currentScheduleProviderId}/services/${serviceId}`, { method: 'DELETE' })
+        .then(() => loadProviderServices())
+        .catch(() => alert("Грешка при премахване"));
+}
+
 
 function removeAbsence(id) {
     if (!confirm("Сигурен ли си?")) return;
 
     fetch(`/admin/absences/${id}`, { method: 'DELETE' })
-        .then(loadBarberAbsences);
+        .then(loadProviderAbsences);
 }
 
 let smsCurrentPage = 1;

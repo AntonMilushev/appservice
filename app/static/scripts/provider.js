@@ -115,7 +115,7 @@ function refreshAll() {
 // ⏳ PENDING
 // =====================
 function loadPending() {
-  fetch('/barber/pending')
+  fetch('/provider/pending')
     .then(r => r.json())
     .then(data => {
 
@@ -212,7 +212,7 @@ function buildHourRange(workStart, workEnd, bookings) {
 function loadCalendar() {
   const date = getDate();
 
-  fetch(`/barber/schedule?date=${date}`)
+  fetch(`/provider/schedule?date=${date}`)
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById("calendar");
@@ -331,7 +331,7 @@ function resetTimer() {
 // 🔔 NOTIFICATIONS
 // =====================
 function loadNotifications() {
-  fetch('/barber/notifications')
+  fetch('/provider/notifications')
     .then(r => r.json())
     .then(d => {
       const el = document.getElementById("notifText");
@@ -424,7 +424,7 @@ function addManualBooking() {
     return;
   }
 
-  fetch("/barber/add-booking", {
+  fetch("/provider/add-booking", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -477,7 +477,7 @@ function loadManualSlots() {
     return;
   }
 
-  fetch(`/barber/available-slots?date=${date}&service_id=${service}`)
+  fetch(`/provider/available-slots?date=${date}&service_id=${service}`)
     .then(async response => {
       const data = await response.json();
 
@@ -522,7 +522,7 @@ function loadManualSlots() {
 }
 
 
-function onBarberDateChange() {
+function onProviderDateChange() {
   loadCalendar();
   loadManualSlots();
 }
@@ -582,7 +582,7 @@ function openMySchedule() {
   document.getElementById("scheduleSheet").classList.remove("hidden");
   document.getElementById("scheduleOverlay").classList.remove("hidden");
 
-  fetch('/barber/settings')
+  fetch('/provider/settings')
     .then(r => r.json())
     .then(data => {
       setSelectedDays("mySchWorkingDaysPicker", data.working_days || "");
@@ -607,7 +607,7 @@ function closeMySchedule() {
 function saveMySchedule() {
   const hasBreak = document.getElementById("mySchBreakToggle").checked;
 
-  fetch('/barber/settings', {
+  fetch('/provider/settings', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -629,7 +629,7 @@ function saveMySchedule() {
 }
 
 function loadMyAbsences() {
-  fetch('/barber/absences')
+  fetch('/provider/absences')
     .then(r => r.json())
     .then(list => {
       const container = document.getElementById("myAbsenceList");
@@ -664,7 +664,7 @@ function addMyAbsence() {
     return;
   }
 
-  fetch('/barber/absences', {
+  fetch('/provider/absences', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -701,7 +701,7 @@ function addMyAbsence() {
 function removeMyAbsence(id) {
   if (!confirm("Сигурен ли си?")) return;
 
-  fetch(`/barber/absences/${id}`, { method: 'DELETE' })
+  fetch(`/provider/absences/${id}`, { method: 'DELETE' })
     .then(loadMyAbsences);
 }
 

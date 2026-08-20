@@ -20,7 +20,7 @@ def track_page_views():
 def index():
     return render_template(
         'index.html',
-        provider=Provider.query.filter_by(is_active=True).all(),
+        providers=Provider.query.filter_by(is_active=True).all(),
         services=Service.query.all(),
         today=sofia_today()
     )

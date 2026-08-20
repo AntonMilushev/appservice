@@ -29,7 +29,7 @@
       <span class="header__mark">✦</span>
       <div>
         <div class="header__eyebrow">Admin Console</div>
-        <h1 class="header__title">БръснаряТ</h1>
+        <h1 class="header__title">Provider App</h1>
       </div>
       <a href="/admin/monitoring" class="btn btn--ghost btn-monitoring">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -59,18 +59,82 @@
     <div id="admin" class="schedule-wrap"></div>
   </section>
 
-  <!-- ═══ BARBERS LIST ═══ -->
+  <!-- ═══ PROVIDERS LIST ═══ -->
   <section class="section">
     <div class="section__header">
-      <h2 class="section__title">Барбери</h2>
+      <h2 class="section__title">Специалисти</h2>
     </div>
-    <div id="barbers" class="barbers-grid"></div>
+    <div id="providers" class="providers-grid"></div>
   </section>
 
-  <!-- ═══ ADD BARBER ═══ -->
+  <!-- ═══ SERVICES CATALOG ═══ -->
   <section class="section">
     <div class="section__header">
-      <h2 class="section__title">Добави барбър</h2>
+      <h2 class="section__title">Услуги</h2>
+    </div>
+    <div id="services" class="providers-grid"></div>
+  </section>
+
+  <!-- ═══ ADD SERVICE ═══ -->
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">Добави услуга</h2>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label class="field__label">Име</label>
+        <input id="serviceName" class="field__input" placeholder="Напр. Подстригване">
+      </div>
+      <div class="field">
+        <label class="field__label">Времетраене (мин)</label>
+        <input id="serviceDuration" type="number" min="5" step="5" class="field__input" placeholder="30">
+      </div>
+      <div class="field">
+        <label class="field__label">Цена (по избор)</label>
+        <input id="servicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="20.00">
+      </div>
+    </div>
+
+    <button onclick="createService()" class="btn btn--primary">Добави услуга</button>
+  </section>
+
+  <!-- ═══ EDIT SERVICE MODAL ═══ -->
+  <div id="serviceModal" class="modal hidden">
+    <div class="modal-content" style="max-width:420px; text-align:left;">
+      <h2>Редактирай услуга</h2>
+
+      <div class="field" style="margin-top:16px;">
+        <label class="field__label">Име</label>
+        <input id="editServiceName" class="field__input">
+      </div>
+
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="field">
+          <label class="field__label">Времетраене (мин)</label>
+          <input id="editServiceDuration" type="number" min="5" step="5" class="field__input">
+        </div>
+        <div class="field">
+          <label class="field__label">Цена</label>
+          <input id="editServicePrice" type="number" min="0" step="0.01" class="field__input">
+        </div>
+      </div>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="editServiceActive">
+        <span class="toggle-switch"></span>
+        <span>Активна (вижда се в резервациите)</span>
+      </label>
+
+      <button class="btn btn--primary" style="margin-top:16px;" onclick="saveServiceEdit()">Запази</button>
+      <button class="btn" style="margin-top:10px;" onclick="closeServiceModal()">Затвори</button>
+    </div>
+  </div>
+
+  <!-- ═══ ADD PROVIDER ═══ -->
+  <section class="section">
+    <div class="section__header">
+      <h2 class="section__title">Добави специалист</h2>
     </div>
 
     <div class="form-grid">
@@ -80,7 +144,7 @@
       </div>
       <div class="field">
         <label class="field__label">Username</label>
-        <input id="username" class="field__input" placeholder="ivan_barber">
+        <input id="username" class="field__input" placeholder="ivan_provider">
       </div>
       <div class="field">
         <label class="field__label">Парола</label>
@@ -93,11 +157,11 @@
     </div>
 
     <img id="preview" class="img-preview">
-    <button onclick="createBarber()" class="btn btn--primary">Добави барбър</button>
+    <button onclick="createProvider()" class="btn btn--primary">Добави специалист</button>
   </section>
   <div id="scheduleModal" class="modal hidden">
     <div class="modal-content" style="max-width:480px; text-align:left; max-height:85vh; overflow-y:auto;">
-      <h2>График — <span id="scheduleBarberName"></span></h2>
+      <h2>График — <span id="scheduleProviderName"></span></h2>
 
       <div class="field" style="margin-top:16px;">
         <label class="field__label">Работни дни</label>
@@ -132,7 +196,29 @@
             class="field__input"></div>
       </div>
 
-      <button class="btn btn--primary" onclick="saveBarberSchedule()">Запази график</button>
+      <button class="btn btn--primary" onclick="saveProviderSchedule()">Запази график</button>
+
+      <hr style="margin:20px 0; border-color: var(--border);">
+
+      <h3 style="margin-bottom:10px;">Услуги, които предлага</h3>
+      <div id="providerServicesList" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+      <div class="form-grid" style="margin-top:14px; grid-template-columns: 2fr 1fr 1fr;">
+        <div class="field">
+          <label class="field__label">Услуга</label>
+          <select id="addServiceSelect" class="field__input"></select>
+        </div>
+        <div class="field">
+          <label class="field__label">Цена (по избор)</label>
+          <input id="addServicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="от каталога">
+        </div>
+        <div class="field">
+          <label class="field__label">Мин. (по избор)</label>
+          <input id="addServiceDuration" type="number" min="5" step="5" class="field__input" placeholder="от каталога">
+        </div>
+      </div>
+
+      <button class="btn btn--primary" style="margin-top:10px;" onclick="addProviderService()">Добави услуга</button>
 
       <hr style="margin:20px 0; border-color: var(--border);">
 
@@ -169,7 +255,7 @@
         </div>
       </div>
 
-      <button class="btn btn--primary" onclick="addBarberAbsence()">Добави отсъствие</button>
+      <button class="btn btn--primary" onclick="addProviderAbsence()">Добави отсъствие</button>
       <button class="btn" style="margin-top:10px;" onclick="closeScheduleModal()">Затвори</button>
     </div>
   </div>

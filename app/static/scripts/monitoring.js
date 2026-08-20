@@ -41,7 +41,7 @@ function renderBookings(b) {
 
 function renderSms(s) {
     document.getElementById("smsStats").innerHTML = `
-        <div class="barbers-grid">
+        <div class="providers-grid">
             ${statCard("Успешни", s.success_24h, "var(--success)")}
             ${statCard("Неуспешни", s.failed_24h, "#e06b62")}
         </div>
@@ -67,7 +67,7 @@ function renderSms(s) {
 
 function renderEmail(e) {
     document.getElementById("emailStats").innerHTML = `
-        <div class="barbers-grid">
+        <div class="providers-grid">
             ${statCard("Успешни", e.success_24h, "var(--success)")}
             ${statCard("Неуспешни", e.failed_24h, "#e06b62")}
         </div>

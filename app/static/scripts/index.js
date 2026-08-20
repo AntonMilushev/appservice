@@ -2,20 +2,20 @@
    GLOBAL STATE
    ========================================================= */
 
-let selectedBarber = null; // пази избрания бръснар
+let selectedProvider = null; // пази избрания бръснар
 
 
 /* =========================================================
-   BARBER SELECTION
+   PROVIDER SELECTION
    ========================================================= */
 
-function selectBarber(e, id) {
-    document.querySelectorAll('.barber-card')
+function selectProvider(e, id) {
+    document.querySelectorAll('.provider-card')
         .forEach(c => c.classList.remove('active'));
 
     e.currentTarget.classList.add('active');
 
-    selectedBarber = id;
+    selectedProvider = id;
 
     // unlock booking
     document.getElementById('bookingSection')
@@ -39,7 +39,7 @@ function goHome() {
         behavior: "smooth"
     });
 
-    // reset selection (barber, service, slot)
+    // reset selection (provider, service, slot)
     document.querySelectorAll(".active").forEach(el => {
         el.classList.remove("active");
     });
@@ -72,12 +72,12 @@ function loadSlots() {
     const date = document.getElementById("date").value;
     const service = document.getElementById("service").value;
 
-    if (!selectedBarber || !date || !service) return;
+    if (!selectedProvider || !date || !service) return;
 
     const container = document.getElementById("slots");
     container.innerHTML = "<p>Зареждане...</p>";
 
-    fetch(`/availability?barber_id=${selectedBarber}&date=${date}&service_id=${service}`)
+    fetch(`/availability?provider_id=${selectedProvider}&date=${date}&service_id=${service}`)
         .then(r => r.json())
         .then(slots => {
             container.innerHTML = "";
@@ -165,7 +165,7 @@ function book() {
             phone,
             email,
             consent,
-            barber_id: selectedBarber,
+            provider_id: selectedProvider,
             service_id: service,
             appointment_time: `${date}T${time}:00`
         })
@@ -216,8 +216,8 @@ function book() {
 function updateSummary() {
     document.getElementById("summary").classList.remove("hidden");
 
-    document.getElementById("sumBarber").innerText =
-        document.querySelector(".barber-card.active p")?.innerText || "-";
+    document.getElementById("sumProvider").innerText =
+        document.querySelector(".provider-card.active p")?.innerText || "-";
 
     document.getElementById("sumService").innerText =
         document.querySelector(".service-card.active p")?.innerText || "-";
@@ -242,7 +242,7 @@ function checkForm() {
 
     const btn = document.querySelector(".main-btn");
 
-    if (name && phone && time && selectedBarber && consent) {
+    if (name && phone && time && selectedProvider && consent) {
         btn.disabled = false;
         btn.style.opacity = "1";
     } else {
@@ -336,21 +336,21 @@ function selectService(e, id) {
 
 // scroll до booking
 function goToBooking() {
-    const selected = document.querySelector('.barber-card.active');
-    const barbersSection = document.getElementById('barbersSection');
+    const selected = document.querySelector('.provider-card.active');
+    const providersSection = document.getElementById('providersSection');
     const bookingSection = document.getElementById('bookingSection');
 
     if (!selected) {
-        barbersSection.scrollIntoView({
+        providersSection.scrollIntoView({
             behavior: 'smooth',
             block: 'center'
         });
 
         // визуален hint
-        barbersSection.classList.add('highlight');
+        providersSection.classList.add('highlight');
 
         setTimeout(() => {
-            barbersSection.classList.remove('highlight');
+            providersSection.classList.remove('highlight');
         }, 1500);
 
     } else {

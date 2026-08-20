@@ -51,7 +51,7 @@
             <div class="nav-left">
                 <div class="logo" onclick="goHome()">
                     <img src="/static/images/barbericon.jpg" alt="logo">
-                    <span>БръснаряТ</span>
+                    <span>Сайт за Услуги</span>
                 </div>
             </div>
 
@@ -74,9 +74,9 @@
         <div class="hero-overlay">
             <h1>
                 <span class="icon">💈</span>
-                <span class="title-text">БръснаряТ</span>
+                <span class="title-text">Услуги</span>
             </h1>
-            <p>Стил. Класа. Прецизност.</p>
+            <p>Твоята нужда. Нашата цел</p>
         </div>
     </div>
     <section id="about" class="about-section">
@@ -88,38 +88,23 @@
                 <h2>💈 За нас</h2>
 
                 <p class="about-intro">
-                    Аз съм бръснар с над 6 години опит зад гърба си – години, изпълнени с постоянство, развитие и любов
-                    към занаята
+                    Нещо за нас
                 </p>
 
-                <p>
-                    Пътят ми започна в MM Barbershop, където поставих основите на уменията си и изградих своя стил. Днес
-                    вече съм самостоятелен повече от 2 години и продължавам да се развивам с още по-голяма мотивация и
-                    амбиция.
 
-                    На 15 ноември 2024 г. създадох „Бръснарят“ – място, в което влагам сърцето и душата си. За мен това
-                    не е просто работа, а призвание. Всеки ден заставам зад стола с желание да дам най-доброто от себе
-                    си и да надграждам умения
-                </p>
 
                 <p>
-                    Най-голямата ми мотивация е моментът, в който клиентът се погледне в огледалото и се усмихне. Това
-                    усещане – че съм допринесъл някой да се почувства по-уверен, по-красив и по-щастлив – е безценно.
-                    Именно това ме кара да обичам още повече това, което правя.
-
-                    Вярвам, че добрият бръснар никога не спира да се развива. Затова постоянно търся нови техники,
-                    усъвършенствам се и се стремя към съвършенство във всеки детайл. За мен всеки клиент е важен и
-                    заслужава внимание, качество и отношение.
+                    и тук пишем нещо за нас
                 </p>
 
                 <div class="about-highlight">
-                    Това е моят път. Това е моят занаят.
+                    и още
                 </div>
 
             </div>
 
             <div class="about-features animate delay-1">
-                <div>✔️ Професионални бръснари</div>
+                <div>✔️ Професионализъм</div>
                 <div>✔️ Премиум обслужване</div>
                 <div>✔️ Модерен стил</div>
             </div>
@@ -194,13 +179,13 @@
 
     <div class="container">
 
-        <div class="barbers" id="barbersSection">
-            {% for b in barbers %}
-            <div class="barber-card" onclick="selectBarber(event, {{b.id}})">
+        <div class="providers" id="providersSection">
+            {% for p in providers %}
+            <div class="provider-card" onclick="selectProvider(event, {{p.id}})">
 
-                <img src="{{ b.image if b.image else url_for('static', filename='default.png') }}">
+                <img src="{{ p.image if p.image else url_for('static', filename='default.png') }}">
 
-                <p class="barber-name">{{ b.name }}</p>
+                <p class="provider-name">{{ p.name }}</p>
 
             </div>
             {% endfor %}
@@ -208,7 +193,7 @@
         <div id="bookingSection" class="disabled">
 
             <div class="booking-lock">
-                <p>👆 Избери бръснар, за да продължиш</p>
+                <p>👆 Избери специалист, за да продължиш</p>
             </div>
 
             <!-- 📅 ДАТА -->
@@ -252,7 +237,7 @@
             <!-- 📋 SUMMARY -->
             <div id="summary" class="summary hidden">
                 <h3>📋 Резервация</h3>
-                <p><strong>Фризьор:</strong> <span id="sumBarber">-</span></p>
+                <p><strong>Специалист:</strong> <span id="sumProvider">-</span></p>
                 <p><strong>Услуга:</strong> <span id="sumService">-</span></p>
                 <p><strong>Дата:</strong> <span id="sumDate">-</span></p>
                 <p><strong>Ден:</strong> <span id="sumDay">-</span></p>
