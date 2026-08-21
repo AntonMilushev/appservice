@@ -46,6 +46,7 @@ function init() {
 
   refreshAll();
   initPush();
+  loadManualServiceOptions();
   loadManualSlots();
   setInterval(refreshAll, 5000);
 
@@ -755,4 +756,31 @@ function initToggle(checkboxId, sectionId) {
       section.querySelectorAll("input").forEach(i => i.value = "");
     }
   });
+}
+
+
+function loadManualServiceOptions() {
+  const select = document.getElementById("manualService");
+  if (!select) return;
+
+  fetch('/provider/services')
+    .then(r => r.json())
+    .then(list => {
+      select.innerHTML = '<option value="">Избери услуга</option>';
+
+      if (!Array.isArray(list) || list.length === 0) {
+        select.innerHTML += '<option value="" disabled>Няма добавени услуги</option>';
+        return;
+      }
+
+      list.forEach(link => {
+        const opt = document.createElement("option");
+        opt.value = link.service_id;
+        opt.textContent = link.duration_minutes !== null
+          ? `${link.service_name} (${link.duration_minutes} мин)`
+          : link.service_name;
+        select.appendChild(opt);
+      });
+    })
+    .catch(() => console.error("Грешка при зареждане на услугите за ръчно добавяне"));
 }

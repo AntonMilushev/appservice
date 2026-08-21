@@ -16,175 +16,173 @@
 <!-- ════════════════════════════════
          TOPBAR
     ════════════════════════════════ -->
-    <header class="app-topbar">
-        <div class="app-topbar__inner">
-            <a class="app-topbar__brand" href="/">
-                <span class="app-topbar__mark">PA</span>
-                <span class="app-topbar__brand-text">Provider App</span>
-            </a>
-            <div class="app-topbar__title">
-                <span class="app-topbar__eyebrow">PROVIDER PANEL</span>
-                <span class="app-topbar__page-title">График</span>
-            </div>
-            <div class="app-topbar__actions">
-                <div class="app-topbar__notice" onclick="scrollToPending()">
-                    <span class="app-topbar__notice-dot"></span>
-                    <span id="notifText">Няма заявки</span>
-                </div>
-                <button class="app-nav-button" onclick="initPush()">🔔 Известия</button>
-                <button class="app-nav-button" onclick="openMySchedule()">⚙️ График</button>
-                <button class="app-nav-button app-nav-button--accent" onclick="logout()">Изход</button>
-            </div>
+<header class="app-topbar">
+    <div class="app-topbar__inner">
+        <a class="app-topbar__brand" href="/">
+            <span class="app-topbar__mark">PA</span>
+            <span class="app-topbar__brand-text">Provider App</span>
+        </a>
+        <div class="app-topbar__title">
+            <span class="app-topbar__eyebrow">PROVIDER PANEL</span>
+            <span class="app-topbar__page-title">График</span>
         </div>
-    </header>
+        <div class="app-topbar__actions">
+            <div class="app-topbar__notice" onclick="scrollToPending()">
+                <span class="app-topbar__notice-dot"></span>
+                <span id="notifText">Няма заявки</span>
+            </div>
+            <button class="app-nav-button" onclick="initPush()">🔔 Известия</button>
+            <button class="app-nav-button" onclick="openMySchedule()">⚙️ График</button>
+            <button class="app-nav-button app-nav-button--accent" onclick="logout()">Изход</button>
+        </div>
+    </div>
+</header>
 
-    <!-- ════════════════════════════════
+<!-- ════════════════════════════════
          MAIN LAYOUT
     ════════════════════════════════ -->
-    <main class="container">
+<main class="container">
 
-        <!-- ⏳ PENDING COLUMN -->
-        <aside class="panel pending-section">
-            <div class="panel__header">
-                <h2 class="panel__title">Чакащи</h2>
-                <span class="panel__badge" id="pendingBadge"></span>
-            </div>
-            <div id="pendingList" class="pending-list"></div>
-        </aside>
-
-        <!-- 📅 CALENDAR COLUMN -->
-        <section class="panel calendar-section">
-            <div class="panel__header">
-                <h2 class="panel__title">Разписание</h2>
-            </div>
-
-            <div class="date-nav">
-                <button class="btn btn--icon" onclick="changeDay(-1)">&#8592;</button>
-                <input type="date" id="date" class="date-input">
-                <button class="btn btn--icon" onclick="changeDay(1)">&#8594;</button>
-            </div>
-
-            <div id="calendar" class="calendar-grid"></div>
-        </section>
-
-    </main>
-
-    <section class="manual-booking panel">
+    <!-- ⏳ PENDING COLUMN -->
+    <aside class="panel pending-section">
         <div class="panel__header">
-            <h2 class="panel__title">Добави час</h2>
+            <h2 class="panel__title">Чакащи</h2>
+            <span class="panel__badge" id="pendingBadge"></span>
+        </div>
+        <div id="pendingList" class="pending-list"></div>
+    </aside>
+
+    <!-- 📅 CALENDAR COLUMN -->
+    <section class="panel calendar-section">
+        <div class="panel__header">
+            <h2 class="panel__title">Разписание</h2>
         </div>
 
-        <div class="manual-form">
-            <input id="manualName" class="manual-input" placeholder="Име на клиент">
-            <input id="manualPhone" class="manual-input" placeholder="Телефон">
-
-            <select id="manualService" class="manual-input">
-                <option value="">Избери услуга</option>
-                <option value="1">Подстригване</option>
-                <option value="2">Брада</option>
-                <option value="3">Подстригване + Брада</option>
-            </select>
-
-            <input type="date" id="manualDate" class="manual-input">
+        <div class="date-nav">
+            <button class="btn btn--icon" onclick="changeDay(-1)">&#8592;</button>
+            <input type="date" id="date" class="date-input">
+            <button class="btn btn--icon" onclick="changeDay(1)">&#8594;</button>
         </div>
 
-        <div id="manualSlots" class="manual-slots"></div>
-        <input id="manualSelectedTime" type="hidden">
-
-        <div id="manualSummary" class="manual-summary hidden">
-            <h3>📋 Резервация</h3>
-            <p><strong>Услуга:</strong> <span id="manualSumService">-</span></p>
-            <p><strong>Дата:</strong> <span id="manualSumDate">-</span></p>
-            <p><strong>Ден:</strong> <span id="manualSumDay">-</span></p>
-            <p><strong>Час:</strong> <span id="manualSumTime">-</span></p>
-            <p><strong>Клиент:</strong> <span id="manualSumName">-</span></p>
-            <p><strong>Телефон:</strong> <span id="manualSumPhone">-</span></p>
-        </div>
-
-        <button class="btn btn--success manual-submit" onclick="addManualBooking()">
-            Добави час
-        </button>
+        <div id="calendar" class="calendar-grid"></div>
     </section>
 
-    <!-- ════════════════════════════════
+</main>
+
+<section class="manual-booking panel">
+    <div class="panel__header">
+        <h2 class="panel__title">Добави час</h2>
+    </div>
+
+    <div class="manual-form">
+        <input id="manualName" class="manual-input" placeholder="Име на клиент">
+        <input id="manualPhone" class="manual-input" placeholder="Телефон">
+
+        <select id="manualService" class="manual-input">
+            <option value="">Избери услуга</option>
+        </select>
+
+
+        <input type="date" id="manualDate" class="manual-input">
+    </div>
+
+    <div id="manualSlots" class="manual-slots"></div>
+    <input id="manualSelectedTime" type="hidden">
+
+    <div id="manualSummary" class="manual-summary hidden">
+        <h3>📋 Резервация</h3>
+        <p><strong>Услуга:</strong> <span id="manualSumService">-</span></p>
+        <p><strong>Дата:</strong> <span id="manualSumDate">-</span></p>
+        <p><strong>Ден:</strong> <span id="manualSumDay">-</span></p>
+        <p><strong>Час:</strong> <span id="manualSumTime">-</span></p>
+        <p><strong>Клиент:</strong> <span id="manualSumName">-</span></p>
+        <p><strong>Телефон:</strong> <span id="manualSumPhone">-</span></p>
+    </div>
+
+    <button class="btn btn--success manual-submit" onclick="addManualBooking()">
+        Добави час
+    </button>
+</section>
+
+<!-- ════════════════════════════════
          ACTION SHEET
     ════════════════════════════════ -->
-    <div id="actionSheet" class="sheet hidden">
-        <div class="sheet__handle"></div>
-        <p class="sheet__label">Избери действие</p>
-        <div class="sheet-content">
-            <button id="approveBtn" class="btn btn--success btn--full">✔ Потвърди</button>
-            <button id="rejectBtn" class="btn btn--danger btn--full">✖ Откажи</button>
-            <button id="deleteBtn" class="btn btn--muted btn--full">🗑 Изтрий</button>
-            <button class="btn btn--ghost btn--full" onclick="closeSheet()">Отказ</button>
-        </div>
+<div id="actionSheet" class="sheet hidden">
+    <div class="sheet__handle"></div>
+    <p class="sheet__label">Избери действие</p>
+    <div class="sheet-content">
+        <button id="approveBtn" class="btn btn--success btn--full">✔ Потвърди</button>
+        <button id="rejectBtn" class="btn btn--danger btn--full">✖ Откажи</button>
+        <button id="deleteBtn" class="btn btn--muted btn--full">🗑 Изтрий</button>
+        <button class="btn btn--ghost btn--full" onclick="closeSheet()">Отказ</button>
     </div>
-    <div class="sheet-overlay hidden" id="sheetOverlay" onclick="closeSheet()"></div>
-    <div id="scheduleSheet" class="sheet hidden" style="max-height:85vh; overflow-y:auto;">
-        <div class="sheet__handle"></div>
-        <p class="sheet__label">Моят график</p>
+</div>
+<div class="sheet-overlay hidden" id="sheetOverlay" onclick="closeSheet()"></div>
+<div id="scheduleSheet" class="sheet hidden" style="max-height:85vh; overflow-y:auto;">
+    <div class="sheet__handle"></div>
+    <p class="sheet__label">Моят график</p>
 
-        <label class="field__label" style="display:block;margin-bottom:8px;">Работни дни</label>
-        <div class="day-picker" id="mySchWorkingDaysPicker">
-            <button type="button" class="day-btn" data-day="1">Пон</button>
-            <button type="button" class="day-btn" data-day="2">Вто</button>
-            <button type="button" class="day-btn" data-day="3">Сря</button>
-            <button type="button" class="day-btn" data-day="4">Чет</button>
-            <button type="button" class="day-btn" data-day="5">Пет</button>
-            <button type="button" class="day-btn" data-day="6">Съб</button>
-            <button type="button" class="day-btn" data-day="7">Нед</button>
-        </div>
-
-        <div class="manual-form" style="grid-template-columns:1fr 1fr; margin-top:14px;">
-            <input id="mySchStart" type="time" class="manual-input">
-            <input id="mySchEnd" type="time" class="manual-input">
-        </div>
-
-        <label class="toggle-row">
-            <input type="checkbox" id="mySchBreakToggle">
-            <span class="toggle-switch"></span>
-            <span>Почивка през деня</span>
-        </label>
-
-        <div class="manual-form toggle-section hidden" id="mySchBreakFields" style="grid-template-columns:1fr 1fr;">
-            <input id="mySchBreakStart" type="time" class="manual-input" placeholder="Почивка от">
-            <input id="mySchBreakEnd" type="time" class="manual-input" placeholder="Почивка до">
-        </div>
-
-        <button class="btn btn--success btn--full" style="margin-top:16px;" onclick="saveMySchedule()">Запази
-            график</button>
-
-        <p class="sheet__label" style="margin-top:24px;">Отпуски / болнични</p>
-        <div id="myAbsenceList"></div>
-
-        <div class="chip-picker" id="myAbsReasonPicker" style="margin-top:14px;">
-            <button type="button" class="chip active" data-reason="Отпуск">Отпуск</button>
-            <button type="button" class="chip" data-reason="Болничен">Болничен</button>
-            <button type="button" class="chip" data-reason="Почивен ден">Почивен ден</button>
-            <button type="button" class="chip" data-reason="Друго">Друго</button>
-        </div>
-
-        <div class="manual-form" style="grid-template-columns:1fr 1fr; margin-top:10px;">
-            <input id="myAbsStart" type="date" class="manual-input">
-            <input id="myAbsEnd" type="date" class="manual-input" placeholder="До (по избор)">
-        </div>
-
-        <label class="toggle-row">
-            <input type="checkbox" id="myAbsPartialToggle">
-            <span class="toggle-switch"></span>
-            <span>Само част от деня</span>
-        </label>
-
-        <div class="manual-form toggle-section hidden" id="myAbsPartialFields" style="grid-template-columns:1fr 1fr;">
-            <input id="myAbsFrom" type="time" class="manual-input" placeholder="от час">
-            <input id="myAbsTo" type="time" class="manual-input" placeholder="до час">
-        </div>
-
-        <button class="btn btn--success btn--full" style="margin-top:10px;" onclick="addMyAbsence()">Добави
-            отсъствие</button>
-        <button class="btn btn--ghost btn--full" onclick="closeMySchedule()">Затвори</button>
+    <label class="field__label" style="display:block;margin-bottom:8px;">Работни дни</label>
+    <div class="day-picker" id="mySchWorkingDaysPicker">
+        <button type="button" class="day-btn" data-day="1">Пон</button>
+        <button type="button" class="day-btn" data-day="2">Вто</button>
+        <button type="button" class="day-btn" data-day="3">Сря</button>
+        <button type="button" class="day-btn" data-day="4">Чет</button>
+        <button type="button" class="day-btn" data-day="5">Пет</button>
+        <button type="button" class="day-btn" data-day="6">Съб</button>
+        <button type="button" class="day-btn" data-day="7">Нед</button>
     </div>
-    <div class="sheet-overlay hidden" id="scheduleOverlay" onclick="closeMySchedule()"></div>
+
+    <div class="manual-form" style="grid-template-columns:1fr 1fr; margin-top:14px;">
+        <input id="mySchStart" type="time" class="manual-input">
+        <input id="mySchEnd" type="time" class="manual-input">
+    </div>
+
+    <label class="toggle-row">
+        <input type="checkbox" id="mySchBreakToggle">
+        <span class="toggle-switch"></span>
+        <span>Почивка през деня</span>
+    </label>
+
+    <div class="manual-form toggle-section hidden" id="mySchBreakFields" style="grid-template-columns:1fr 1fr;">
+        <input id="mySchBreakStart" type="time" class="manual-input" placeholder="Почивка от">
+        <input id="mySchBreakEnd" type="time" class="manual-input" placeholder="Почивка до">
+    </div>
+
+    <button class="btn btn--success btn--full" style="margin-top:16px;" onclick="saveMySchedule()">Запази
+        график</button>
+
+    <p class="sheet__label" style="margin-top:24px;">Отпуски / болнични</p>
+    <div id="myAbsenceList"></div>
+
+    <div class="chip-picker" id="myAbsReasonPicker" style="margin-top:14px;">
+        <button type="button" class="chip active" data-reason="Отпуск">Отпуск</button>
+        <button type="button" class="chip" data-reason="Болничен">Болничен</button>
+        <button type="button" class="chip" data-reason="Почивен ден">Почивен ден</button>
+        <button type="button" class="chip" data-reason="Друго">Друго</button>
+    </div>
+
+    <div class="manual-form" style="grid-template-columns:1fr 1fr; margin-top:10px;">
+        <input id="myAbsStart" type="date" class="manual-input">
+        <input id="myAbsEnd" type="date" class="manual-input" placeholder="До (по избор)">
+    </div>
+
+    <label class="toggle-row">
+        <input type="checkbox" id="myAbsPartialToggle">
+        <span class="toggle-switch"></span>
+        <span>Само част от деня</span>
+    </label>
+
+    <div class="manual-form toggle-section hidden" id="myAbsPartialFields" style="grid-template-columns:1fr 1fr;">
+        <input id="myAbsFrom" type="time" class="manual-input" placeholder="от час">
+        <input id="myAbsTo" type="time" class="manual-input" placeholder="до час">
+    </div>
+
+    <button class="btn btn--success btn--full" style="margin-top:10px;" onclick="addMyAbsence()">Добави
+        отсъствие</button>
+    <button class="btn btn--ghost btn--full" onclick="closeMySchedule()">Затвори</button>
+</div>
+<div class="sheet-overlay hidden" id="scheduleOverlay" onclick="closeMySchedule()"></div>
 {% endblock %}
 
 {% block scripts %}
