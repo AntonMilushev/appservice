@@ -186,5 +186,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='scripts/provider.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/provider.js') }}?v={{ config.get('ASSET_VERSION', '1') }}"></script>
 {% endblock %}
