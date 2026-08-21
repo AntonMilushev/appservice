@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="bg">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <!-- ✏️ EDIT: заглавие на таба -->
-    <title>Provider App — Запази час</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Запази час онлайн за няколко секунди.">
+{% block title %}Provider App — Запази час{% endblock %}
+{% block body_class %}page-client{% endblock %}
+{% block head_meta %}
+<meta name="description" content="Запази час онлайн за няколко секунди.">
+<link rel="manifest" href="/static/manifest-client.json">
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="manifest" href="/static/manifest-client.json">
-</head>
-
-<body>
-
-    <!-- ═══ NAV ═══ -->
+{% block content %}
+<!-- ═══ NAV ═══ -->
     <nav class="nav" id="nav">
         <div class="nav__inner">
             <!-- ✏️ EDIT: марка/лого -->
@@ -195,9 +192,9 @@
     </footer>
 
     <div class="toast" id="toast"></div>
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
-</body>
-
-</html>
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+{% endblock %}

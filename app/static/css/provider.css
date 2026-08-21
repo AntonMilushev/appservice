@@ -1,50 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    🎨 DESIGN TOKENS — Premium Barber Studio
    ═══════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-:root {
-    /* Gold palette */
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --gold-dim: rgba(201, 168, 76, 0.18);
-    --gold-border: rgba(201, 168, 76, 0.3);
-
-    /* Backgrounds */
-    --bg: #0a0a0a;
-    --bg-card: #111111;
-    --bg-elevated: #181818;
-    --bg-hover: #1f1f1f;
-
-    /* Text */
-    --text: #f0ece4;
-    --text-muted: #6b6560;
-    --text-sub: #9b9490;
-
-    /* Borders */
-    --border: rgba(255, 255, 255, 0.07);
-    --border-gold: rgba(201, 168, 76, 0.25);
-
-    /* Status */
-    --success: #4caf7d;
-    --success-dim: rgba(76, 175, 125, 0.15);
-    --danger: #c0392b;
-    --danger-dim: rgba(192, 57, 43, 0.15);
-    --warning: #c9a84c;
-    --warning-dim: rgba(201, 168, 76, 0.12);
-
-    /* Type */
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-mono: 'DM Mono', 'Courier New', monospace;
-
-    /* Radius */
-    --r-sm: 6px;
-    --r-md: 10px;
-    --r-lg: 16px;
-
-    /* Transition */
-    --t: 0.2s ease;
-}
 
 /* ═══════════════════════════════════════════════════════════
    🌍 RESET & BASE
@@ -63,7 +19,7 @@ html {
 }
 
 body {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -186,7 +142,7 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -326,7 +282,7 @@ button.delete {
     padding: 8px 13px;
     border-radius: var(--r-sm);
     border: 1px solid transparent;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -401,7 +357,7 @@ button.delete:hover {
 }
 
 .panel__badge {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 100px;
@@ -473,7 +429,7 @@ button.delete:hover {
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-align: center;
@@ -524,7 +480,7 @@ button.delete:hover {
 
 /* Time label — the strong inside calendar-slot */
 .calendar-slot>strong {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     color: var(--text-muted);
     letter-spacing: 0.05em;
@@ -810,7 +766,7 @@ button.delete:hover {
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 12px;
     letter-spacing: 0.04em;
     padding: 0 13px;
@@ -858,7 +814,7 @@ button.delete:hover {
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     color: var(--text-sub);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     letter-spacing: 0.07em;
     cursor: pointer;
@@ -980,7 +936,7 @@ button.delete:hover {
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     color: var(--text-sub);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     letter-spacing: 0.04em;
     cursor: pointer;
@@ -1004,7 +960,7 @@ button.delete:hover {
     border: 1px solid var(--border);
     border-radius: 100px;
     color: var(--text-sub);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 12px;
     cursor: pointer;
     transition: var(--t);
@@ -1075,3 +1031,5 @@ button.delete:hover {
 .toggle-section.hidden {
     display: none;
 }
+/* Jinja theme shell overrides */
+.page-provider { background: var(--paper); color: var(--ink); }

@@ -1,41 +1,6 @@
 /* ═══════════════════════════════════════════════════
    TOKENS
    ═══════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
-
-:root {
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --gold-dim: rgba(201, 168, 76, 0.14);
-    --gold-border: rgba(201, 168, 76, 0.28);
-
-    --bg: #0c0c0c;
-    --bg-card: #111111;
-    --bg-elevated: #161616;
-    --bg-hover: #1a1a1a;
-
-    --text: #ede9e2;
-    --text-sub: #7a7570;
-    --text-muted: #3f3c39;
-
-    --border: rgba(255, 255, 255, 0.06);
-    --border-mid: rgba(255, 255, 255, 0.1);
-
-    --success: #4caf7d;
-    --success-dim: rgba(76, 175, 125, 0.14);
-    --danger: #c0392b;
-    --danger-dim: rgba(192, 57, 43, 0.14);
-    --warning: #c9a84c;
-    --warning-dim: rgba(201, 168, 76, 0.12);
-
-    --font-display: 'Bebas Neue', Impact, sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-
-    --r: 8px;
-    --r-lg: 14px;
-    --t: 0.18s ease;
-}
 
 /* ═══════════════════════════════════════════════════
    RESET
@@ -99,7 +64,7 @@ body {
 }
 
 .header__eyebrow {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 9px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -120,7 +85,7 @@ body {
    ═══════════════════════════════════════════════════ */
 button,
 .btn {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -279,7 +244,7 @@ button.delete:hover {
 }
 
 .day-label {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -291,7 +256,7 @@ button.delete:hover {
     border: 1px solid var(--border-mid);
     border-radius: var(--r);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     letter-spacing: 0.05em;
     padding: 6px 10px;
@@ -370,7 +335,7 @@ button.delete:hover {
 }
 
 .time-slot>strong {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 10px;
     color: var(--text-muted);
     letter-spacing: 0.05em;
@@ -496,7 +461,7 @@ button.delete:hover {
 }
 
 .field__label {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -668,7 +633,7 @@ button.delete:hover {
     border: 1px solid var(--border-mid);
     border-radius: var(--r);
     color: var(--text-sub);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: normal;
@@ -884,3 +849,6 @@ button.delete:hover {
     padding: 24px 28px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
 }
+/* Jinja theme shell overrides */
+.page-admin { background: var(--paper); color: var(--ink); }
+.page-admin .app-topbar + .section { margin-top: 0; }

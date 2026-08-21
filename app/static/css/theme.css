@@ -1,0 +1,253 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/*
+   Provider App — GLOBAL THEME
+   Change this file to re-skin the whole application.
+   Templates, routes, models and business logic do not need to change.
+*/
+
+:root {
+    /* Main palette */
+    --paper: #EEEFEA;
+    --surface: #FFFFFF;
+    --surface-2: #F5F4EF;
+    --ink: #1B2430;
+    --ink-soft: #5B6472;
+    --ink-faint: #94998F;
+
+    --gold: #B98B34;
+    --gold-light: #D4AA52;
+    --gold-soft: rgba(185, 139, 52, 0.14);
+    --gold-border: rgba(185, 139, 52, 0.28);
+
+    --stamp: #E2432A;
+    --stamp-soft: rgba(226, 67, 42, 0.10);
+
+    --line: #D8D4C8;
+    --line-strong: #C3BEAE;
+    --border: #D8D4C8;
+    --border-mid: #C3BEAE;
+    --border-gold: rgba(185, 139, 52, 0.28);
+
+    --success: #3F7A54;
+    --success-dim: rgba(63, 122, 84, 0.14);
+    --danger: #C0392B;
+    --danger-dim: rgba(192, 57, 43, 0.12);
+    --warning: #B98B34;
+    --warning-dim: rgba(185, 139, 52, 0.12);
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    --r: 8px;
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 22px;
+    --nav-h: 68px;
+    --t: 0.2s ease;
+    --t-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Shared typography / form normalization. Page styles can specialize these. */
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+}
+
+button, input, select, textarea { font: inherit; }
+
+::selection {
+    background: var(--gold-soft);
+    color: var(--ink);
+}
+
+/* Compatibility aliases used by the existing admin/provider styles. */
+:root {
+    --bg: var(--paper);
+    --bg-card: var(--surface);
+    --bg-elevated: var(--surface-2);
+    --bg-hover: #ECEAE2;
+    --text: var(--ink);
+    --text-sub: var(--ink-soft);
+    --text-muted: var(--ink-faint);
+    --gold-dim: var(--gold-soft);
+    --warning-dim: var(--warning-dim);
+    --primary: var(--gold);
+    --primary-dark: #9A7226;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* =========================================================
+   GLOBAL APP SHELL
+   Shared by login / admin / provider / monitoring.
+   ========================================================= */
+.app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    min-height: var(--nav-h);
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.app-topbar__inner {
+    width: min(1400px, calc(100% - 40px));
+    min-height: var(--nav-h);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.app-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.app-topbar__mark {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--gold-border);
+    border-radius: 10px;
+    background: var(--gold-soft);
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+.app-topbar__brand-text { letter-spacing: -.01em; }
+
+.app-topbar__title {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.app-topbar__eyebrow {
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.app-topbar__page-title {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.app-topbar__actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.app-nav-link,
+.app-nav-button {
+    min-height: 38px;
+    padding: 8px 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+    color: var(--ink);
+    font: 600 13px var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform var(--t), background var(--t), border-color var(--t), color var(--t), box-shadow var(--t);
+}
+
+.app-nav-link:hover,
+.app-nav-button:hover {
+    transform: translateY(-1px);
+    border-color: var(--gold-border);
+    background: var(--gold-soft);
+}
+
+.app-nav-button--accent {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: #fff;
+}
+
+.app-nav-button--accent:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+}
+
+.app-topbar__notice {
+    min-height: 38px;
+    padding: 8px 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--gold-border);
+    border-radius: var(--r);
+    background: var(--gold-soft);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.app-topbar__notice-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px var(--gold-soft);
+}
+
+/* Keep the application shell readable even when page-specific CSS is dark/legacy. */
+.page-admin .app-topbar,
+.page-provider .app-topbar,
+.page-monitoring .app-topbar {
+    color: var(--ink);
+}
+
+@media (max-width: 900px) {
+    .app-topbar__inner { width: min(100% - 24px, 1400px); gap: 14px; }
+    .app-topbar__title { display: none; }
+    .app-topbar__actions { gap: 6px; }
+    .app-nav-link, .app-nav-button { padding: 8px 10px; }
+}
+
+@media (max-width: 620px) {
+    .app-topbar__brand-text { display: none; }
+    .app-topbar__inner { min-height: 60px; }
+    .app-topbar__mark { width: 36px; height: 36px; }
+    .app-topbar__actions { overflow-x: auto; }
+    .app-topbar__notice { display: none; }
+}

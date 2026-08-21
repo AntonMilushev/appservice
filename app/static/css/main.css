@@ -8,35 +8,6 @@
    Смени тези 6 стойности и целият сайт се преоблича.
    ════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
-:root {
-    --paper: #EEEFEA;
-    --surface: #FFFFFF;
-    --ink: #1B2430;
-    --ink-soft: #5B6472;
-    --ink-faint: #94998F;
-    --gold: #B98B34;
-    --gold-soft: rgba(185, 139, 52, 0.14);
-    --stamp: #E2432A;
-    --stamp-soft: rgba(226, 67, 42, 0.1);
-    --line: #D8D4C8;
-    --line-strong: #C3BEAE;
-    --success: #3F7A54;
-    --danger: #C0392B;
-
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-
-    --r-sm: 8px;
-    --r-md: 14px;
-    --r-lg: 22px;
-
-    --nav-h: 68px;
-    --t: 0.2s ease;
-    --t-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 @media (prefers-reduced-motion: reduce) {
     * {

@@ -1,99 +1,40 @@
-<!DOCTYPE html>
-<html lang="bg">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Политика за поверителност — Provider App{% endblock %}
+{% block body_class %}page-privacy{% endblock %}
+{% block styles %}
+<style>
+.page-privacy { background: var(--paper); color: var(--ink); margin: 0; padding: 40px 20px; line-height: 1.6; }
+.page-privacy .privacy-container { max-width: 800px; margin: auto; }
+.page-privacy h1 { color: var(--gold); margin-bottom: 20px; font-family: var(--font-display); }
+.page-privacy h2 { margin-top: 30px; color: var(--ink); }
+.page-privacy p, .page-privacy li { color: var(--ink-soft); }
+.page-privacy a { color: var(--gold); }
+</style>
+{% endblock %}
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+{% block content %}
+<div class="privacy-container">
+    <h1>Политика за поверителност</h1>
+    <p>Настоящата политика описва как събираме, използваме и защитаваме вашите лични данни при използване на нашата система за онлайн резервации.</p>
 
-        gtag('config', 'G-Y0CVVG8G36');
-    </script>
-    <meta charset="UTF-8">
-    <title>Политика за поверителност</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h2>1. Какви данни събираме</h2>
+    <p>При създаване на резервация можем да събираме:</p>
+    <ul><li>Име</li><li>Телефонен номер</li><li>Email адрес (по избор)</li></ul>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            margin: 0;
-            padding: 40px 20px;
-            line-height: 1.6;
-        }
+    <h2>2. За какво използваме данните</h2>
+    <p>Данните се използват единствено за:</p>
+    <ul><li>Управление на резервации</li><li>Контакт с клиента при нужда</li><li>Подобряване на услугата</li></ul>
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
+    <h2>3. Съхранение на данните</h2>
+    <p>Данните се съхраняват сигурно и не се предоставят на трети лица, освен ако това не е законово изискване.</p>
 
-        h1 {
-            color: #d4af37;
-            margin-bottom: 20px;
-        }
+    <h2>4. Вашите права</h2>
+    <p>Имате право да:</p>
+    <ul><li>Поискате достъп до вашите данни</li><li>Поискате корекция или изтриване</li><li>Оттеглите съгласието си</li></ul>
 
-        h2 {
-            margin-top: 30px;
-            color: #e2e8f0;
-        }
-
-        p {
-            color: #cbd5f5;
-        }
-
-        a {
-            color: #d4af37;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <h1>Политика за поверителност</h1>
-
-        <p>Настоящата политика описва как събираме, използваме и защитаваме вашите лични данни при използване на нашата
-            система за онлайн резервации.</p>
-
-        <h2>1. Какви данни събираме</h2>
-        <p>При създаване на резервация можем да събираме:</p>
-        <ul>
-            <li>Име</li>
-            <li>Телефонен номер</li>
-            <li>Email адрес (по избор)</li>
-        </ul>
-
-        <h2>2. За какво използваме данните</h2>
-        <p>Данните се използват единствено за:</p>
-        <ul>
-            <li>Управление на резервации</li>
-            <li>Контакт с клиента при нужда</li>
-            <li>Подобряване на услугата</li>
-        </ul>
-
-        <h2>3. Съхранение на данните</h2>
-        <p>Данните се съхраняват сигурно и не се предоставят на трети лица, освен ако това не е законово изискване.</p>
-
-        <h2>4. Вашите права</h2>
-        <p>Имате право да:</p>
-        <ul>
-            <li>Поискате достъп до вашите данни</li>
-            <li>Поискате корекция или изтриване</li>
-            <li>Оттеглите съгласието си</li>
-        </ul>
-
-        <h2>5. Контакт</h2>
-        <p>За въпроси относно вашите данни, можете да се свържете с нас.</p>
-
-        <p style="margin-top:40px; font-size:12px; color:#94a3b8;">
-            Последна актуализация: 2026
-        </p>
-    </div>
-
-</body>
-
-</html>
+    <h2>5. Контакт</h2>
+    <p>За въпроси относно вашите данни, можете да се свържете с нас.</p>
+    <p style="margin-top:40px; font-size:12px; color:var(--ink-faint);">Последна актуализация: 2026</p>
+</div>
+{% endblock %}

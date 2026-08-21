@@ -1,7 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Login — Provider App{% endblock %}
+{% block body_class %}page-login{% endblock %}
+{% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
 <div class="login-box">
-    <h2>💈 Login</h2>
+    <h2> Login</h2>
 
     <div class="input-group">
         <input id="username" type="text" required>
@@ -15,7 +22,9 @@
 
     <button onclick="login()">Login</button>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
     function login() {
         const username = document.getElementById("username").value;
@@ -41,3 +50,4 @@
             });
     }
 </script>
+{% endblock %}

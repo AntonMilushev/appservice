@@ -15,5 +15,6 @@ gunicorn==22.0.0
 
 APScheduler==3.10.4
 
+Flask-Migrate==4.1.0
 prometheus-client==0.20.0
 

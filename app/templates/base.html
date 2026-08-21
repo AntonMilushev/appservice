@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="{{ theme_color|default('#EEEFEA') }}">
+    <meta name="description" content="{{ meta_description|default('Provider App') }}">
+    <title>{% block title %}Provider App{% endblock %}</title>
+
+    <!-- Shared design system: change the look here without touching Flask/business logic. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    {% block head_meta %}{% endblock %}
+    {% block styles %}{% endblock %}
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y0CVVG8G36');
+    </script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

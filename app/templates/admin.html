@@ -1,45 +1,28 @@
-<!DOCTYPE html>
-<html lang="bg">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Admin Panel — Provider App{% endblock %}
+{% block body_class %}page-admin{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0CVVG8G36"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-Y0CVVG8G36');
-  </script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel</title>
-  <link rel="stylesheet" href="/static/css/admin.css">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
-</head>
-
-<body>
-
-  <!-- ═══ HEADER ═══ -->
-  <header class="header">
-    <div class="header__left">
-      <span class="header__mark">✦</span>
-      <div>
-        <div class="header__eyebrow">Admin Console</div>
-        <h1 class="header__title">Provider App</h1>
-      </div>
-      <a href="/admin/monitoring" class="btn btn--ghost btn-monitoring">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
-        Мониторинг
+{% block content %}
+<!-- ═══ HEADER ═══ -->
+  <header class="app-topbar">
+    <div class="app-topbar__inner">
+      <a class="app-topbar__brand" href="/">
+        <span class="app-topbar__mark">PA</span>
+        <span class="app-topbar__brand-text">Provider App</span>
       </a>
+      <div class="app-topbar__title">
+        <span class="app-topbar__eyebrow">ADMIN CONSOLE</span>
+        <span class="app-topbar__page-title">Администрация</span>
+      </div>
+      <div class="app-topbar__actions">
+        <a href="/admin/monitoring" class="app-nav-link">Мониторинг</a>
+        <button onclick="logout()" class="app-nav-button app-nav-button--accent">Изход</button>
+      </div>
     </div>
-    <button onclick="logout()" class="btn btn--logout">Изход</button>
   </header>
 
   <!-- ═══ SCHEDULE ═══ -->
@@ -288,9 +271,8 @@
     <div id="smsPagination"
       style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:14px;"></div>
   </section>
+{% endblock %}
 
-
-  <script src="/static/scripts/admin.js"></script>
-</body>
-
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts/admin.js') }}"></script>
+{% endblock %}
