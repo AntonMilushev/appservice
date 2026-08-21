@@ -40,15 +40,25 @@ def start_scheduler(app):
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-
+  
     app.config['SECRET_KEY'] = 'secret'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.getcwd(), 'appservice.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+    
     db.init_app(app)
     migrate.init_app(app, db)
 
     CORS(app)
+
+    @app.context_processor
+    def inject_asset_version():
+        def asset_version(filename):
+            filepath = os.path.join(app.static_folder, filename)
+            try:
+                return int(os.path.getmtime(filepath))
+            except OSError:
+                return 1
+        return dict(asset_version=asset_version)
 
     # 🔌 ROUTES
     from app.routes.main import main

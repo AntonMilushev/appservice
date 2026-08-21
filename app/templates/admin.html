@@ -8,271 +8,272 @@
 
 {% block content %}
 <!-- ═══ HEADER ═══ -->
-  <header class="app-topbar">
-    <div class="app-topbar__inner">
-      <a class="app-topbar__brand" href="/">
-        <span class="app-topbar__mark">PA</span>
-        <span class="app-topbar__brand-text">Provider App</span>
-      </a>
-      <div class="app-topbar__title">
-        <span class="app-topbar__eyebrow">ADMIN CONSOLE</span>
-        <span class="app-topbar__page-title">Администрация</span>
+<header class="app-topbar">
+  <div class="app-topbar__inner">
+    <a class="app-topbar__brand" href="/">
+      <span class="app-topbar__mark">PA</span>
+      <span class="app-topbar__brand-text">Provider App</span>
+    </a>
+    <div class="app-topbar__title">
+      <span class="app-topbar__eyebrow">ADMIN CONSOLE</span>
+      <span class="app-topbar__page-title">Администрация</span>
+    </div>
+    <div class="app-topbar__actions">
+      <a href="/admin/monitoring" class="app-nav-link">Мониторинг</a>
+      <button onclick="logout()" class="app-nav-button app-nav-button--accent">Изход</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SCHEDULE ═══ -->
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">График</h2>
+    <div class="date-nav">
+      <button class="btn btn--nav" onclick="changeDay(-1)">&#8592;</button>
+      <div class="date-center">
+        <button onclick="goToday()" class="btn btn--today">Днес</button>
+        <span id="dayLabel" class="day-label"></span>
+        <input type="date" id="adminDate" class="date-input">
       </div>
-      <div class="app-topbar__actions">
-        <a href="/admin/monitoring" class="app-nav-link">Мониторинг</a>
-        <button onclick="logout()" class="app-nav-button app-nav-button--accent">Изход</button>
-      </div>
+      <button class="btn btn--nav" onclick="changeDay(1)">&#8594;</button>
     </div>
-  </header>
+  </div>
+  <div id="admin" class="schedule-wrap"></div>
+</section>
 
-  <!-- ═══ SCHEDULE ═══ -->
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">График</h2>
-      <div class="date-nav">
-        <button class="btn btn--nav" onclick="changeDay(-1)">&#8592;</button>
-        <div class="date-center">
-          <button onclick="goToday()" class="btn btn--today">Днес</button>
-          <span id="dayLabel" class="day-label"></span>
-          <input type="date" id="adminDate" class="date-input">
-        </div>
-        <button class="btn btn--nav" onclick="changeDay(1)">&#8594;</button>
-      </div>
+<!-- ═══ PROVIDERS LIST ═══ -->
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">Специалисти</h2>
+  </div>
+  <div id="providers" class="providers-grid"></div>
+</section>
+
+<!-- ═══ SERVICES CATALOG ═══ -->
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">Услуги</h2>
+  </div>
+  <div id="services" class="providers-grid"></div>
+</section>
+
+<!-- ═══ ADD SERVICE ═══ -->
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">Добави услуга</h2>
+  </div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label class="field__label">Име</label>
+      <input id="serviceName" class="field__input" placeholder="Напр. Подстригване">
     </div>
-    <div id="admin" class="schedule-wrap"></div>
-  </section>
-
-  <!-- ═══ PROVIDERS LIST ═══ -->
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">Специалисти</h2>
+    <div class="field">
+      <label class="field__label">Времетраене (мин)</label>
+      <input id="serviceDuration" type="number" min="5" step="5" class="field__input" placeholder="30">
     </div>
-    <div id="providers" class="providers-grid"></div>
-  </section>
-
-  <!-- ═══ SERVICES CATALOG ═══ -->
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">Услуги</h2>
+    <div class="field">
+      <label class="field__label">Цена (по избор)</label>
+      <input id="servicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="20.00">
     </div>
-    <div id="services" class="providers-grid"></div>
-  </section>
+  </div>
 
-  <!-- ═══ ADD SERVICE ═══ -->
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">Добави услуга</h2>
+  <button onclick="createService()" class="btn btn--primary">Добави услуга</button>
+</section>
+
+<!-- ═══ EDIT SERVICE MODAL ═══ -->
+<div id="serviceModal" class="modal hidden">
+  <div class="modal-content" style="max-width:420px; text-align:left;">
+    <h2>Редактирай услуга</h2>
+
+    <div class="field" style="margin-top:16px;">
+      <label class="field__label">Име</label>
+      <input id="editServiceName" class="field__input">
     </div>
 
-    <div class="form-grid">
-      <div class="field">
-        <label class="field__label">Име</label>
-        <input id="serviceName" class="field__input" placeholder="Напр. Подстригване">
-      </div>
+    <div class="form-grid" style="margin-top:14px;">
       <div class="field">
         <label class="field__label">Времетраене (мин)</label>
-        <input id="serviceDuration" type="number" min="5" step="5" class="field__input" placeholder="30">
+        <input id="editServiceDuration" type="number" min="5" step="5" class="field__input">
       </div>
       <div class="field">
-        <label class="field__label">Цена (по избор)</label>
-        <input id="servicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="20.00">
+        <label class="field__label">Цена</label>
+        <input id="editServicePrice" type="number" min="0" step="0.01" class="field__input">
       </div>
     </div>
 
-    <button onclick="createService()" class="btn btn--primary">Добави услуга</button>
-  </section>
+    <label class="toggle-row">
+      <input type="checkbox" id="editServiceActive">
+      <span class="toggle-switch"></span>
+      <span>Активна (вижда се в резервациите)</span>
+    </label>
 
-  <!-- ═══ EDIT SERVICE MODAL ═══ -->
-  <div id="serviceModal" class="modal hidden">
-    <div class="modal-content" style="max-width:420px; text-align:left;">
-      <h2>Редактирай услуга</h2>
+    <button class="btn btn--primary" style="margin-top:16px;" onclick="saveServiceEdit()">Запази</button>
+    <button class="btn" style="margin-top:10px;" onclick="closeServiceModal()">Затвори</button>
+  </div>
+</div>
 
-      <div class="field" style="margin-top:16px;">
-        <label class="field__label">Име</label>
-        <input id="editServiceName" class="field__input">
-      </div>
+<!-- ═══ ADD PROVIDER ═══ -->
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">Добави специалист</h2>
+  </div>
 
-      <div class="form-grid" style="margin-top:14px;">
-        <div class="field">
-          <label class="field__label">Времетраене (мин)</label>
-          <input id="editServiceDuration" type="number" min="5" step="5" class="field__input">
-        </div>
-        <div class="field">
-          <label class="field__label">Цена</label>
-          <input id="editServicePrice" type="number" min="0" step="0.01" class="field__input">
-        </div>
-      </div>
-
-      <label class="toggle-row">
-        <input type="checkbox" id="editServiceActive">
-        <span class="toggle-switch"></span>
-        <span>Активна (вижда се в резервациите)</span>
-      </label>
-
-      <button class="btn btn--primary" style="margin-top:16px;" onclick="saveServiceEdit()">Запази</button>
-      <button class="btn" style="margin-top:10px;" onclick="closeServiceModal()">Затвори</button>
+  <div class="form-grid">
+    <div class="field">
+      <label class="field__label">Име</label>
+      <input id="name" class="field__input" placeholder="Напр. Иван">
+    </div>
+    <div class="field">
+      <label class="field__label">Username</label>
+      <input id="username" class="field__input" placeholder="ivan_provider">
+    </div>
+    <div class="field">
+      <label class="field__label">Парола</label>
+      <input id="password" type="password" class="field__input" placeholder="••••••">
+    </div>
+    <div class="field">
+      <label class="field__label">Снимка</label>
+      <input type="file" id="imageFile" class="field__input field__input--file">
     </div>
   </div>
 
-  <!-- ═══ ADD PROVIDER ═══ -->
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">Добави специалист</h2>
+  <img id="preview" class="img-preview">
+  <button onclick="createProvider()" class="btn btn--primary">Добави специалист</button>
+</section>
+<!-- ═══ PROVIDER SERVICES MODAL ═══ -->
+<div id="providerServicesModal" class="modal hidden">
+  <div class="modal-content" style="max-width:560px; text-align:left; max-height:85vh; overflow-y:auto;">
+    <h2>Услуги — <span id="providerServicesProviderName"></span></h2>
+
+    <div style="margin-top:16px;">
+      <div id="providerServicesList" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
-    <div class="form-grid">
+    <hr style="margin:20px 0; border-color: var(--border);">
+
+    <h3 style="margin-bottom:10px;">Добави услуга</h3>
+    <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr;">
       <div class="field">
-        <label class="field__label">Име</label>
-        <input id="name" class="field__input" placeholder="Напр. Иван">
+        <label class="field__label">Услуга</label>
+        <select id="addServiceSelect" class="field__input"></select>
       </div>
       <div class="field">
-        <label class="field__label">Username</label>
-        <input id="username" class="field__input" placeholder="ivan_provider">
+        <label class="field__label">Цена</label>
+        <input id="addServicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="от каталога">
       </div>
       <div class="field">
-        <label class="field__label">Парола</label>
-        <input id="password" type="password" class="field__input" placeholder="••••••">
-      </div>
-      <div class="field">
-        <label class="field__label">Снимка</label>
-        <input type="file" id="imageFile" class="field__input field__input--file">
+        <label class="field__label">Мин.</label>
+        <input id="addServiceDuration" type="number" min="5" step="5" class="field__input" placeholder="от каталога">
       </div>
     </div>
 
-    <img id="preview" class="img-preview">
-    <button onclick="createProvider()" class="btn btn--primary">Добави специалист</button>
-  </section>
-  <!-- ═══ PROVIDER SERVICES MODAL ═══ -->
-  <div id="providerServicesModal" class="modal hidden">
-    <div class="modal-content" style="max-width:560px; text-align:left; max-height:85vh; overflow-y:auto;">
-      <h2>Услуги — <span id="providerServicesProviderName"></span></h2>
+    <button class="btn btn--primary" style="margin-top:10px;" onclick="addProviderService()">Добави услуга</button>
+    <button class="btn" style="margin-top:10px;" onclick="closeProviderServicesModal()">Затвори</button>
+  </div>
+</div>
 
-      <div style="margin-top:16px;">
-        <div id="providerServicesList" style="display:flex; flex-direction:column; gap:8px;"></div>
+<div id="scheduleModal" class="modal hidden">
+  <div class="modal-content" style="max-width:480px; text-align:left; max-height:85vh; overflow-y:auto;">
+    <h2>График — <span id="scheduleProviderName"></span></h2>
+
+    <div class="field" style="margin-top:16px;">
+      <label class="field__label">Работни дни</label>
+      <div class="day-picker" id="schWorkingDaysPicker">
+        <button type="button" class="day-btn" data-day="1">Пон</button>
+        <button type="button" class="day-btn" data-day="2">Вто</button>
+        <button type="button" class="day-btn" data-day="3">Сря</button>
+        <button type="button" class="day-btn" data-day="4">Чет</button>
+        <button type="button" class="day-btn" data-day="5">Пет</button>
+        <button type="button" class="day-btn" data-day="6">Съб</button>
+        <button type="button" class="day-btn" data-day="7">Нед</button>
       </div>
+    </div>
 
-      <hr style="margin:20px 0; border-color: var(--border);">
-
-      <h3 style="margin-bottom:10px;">Добави услуга</h3>
-      <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr;">
-        <div class="field">
-          <label class="field__label">Услуга</label>
-          <select id="addServiceSelect" class="field__input"></select>
-        </div>
-        <div class="field">
-          <label class="field__label">Цена</label>
-          <input id="addServicePrice" type="number" min="0" step="0.01" class="field__input" placeholder="от каталога">
-        </div>
-        <div class="field">
-          <label class="field__label">Мин.</label>
-          <input id="addServiceDuration" type="number" min="5" step="5" class="field__input" placeholder="от каталога">
-        </div>
+    <div class="form-grid" style="margin-top:14px;">
+      <div class="field"><label class="field__label">Начало</label><input id="schStart" type="time"
+          class="field__input"></div>
+      <div class="field"><label class="field__label">Край</label><input id="schEnd" type="time" class="field__input">
       </div>
+    </div>
 
-      <button class="btn btn--primary" style="margin-top:10px;" onclick="addProviderService()">Добави услуга</button>
-      <button class="btn" style="margin-top:10px;" onclick="closeProviderServicesModal()">Затвори</button>
+    <label class="toggle-row">
+      <input type="checkbox" id="schBreakToggle">
+      <span class="toggle-switch"></span>
+      <span>Почивка през деня</span>
+    </label>
+
+    <div class="form-grid toggle-section hidden" id="schBreakFields">
+      <div class="field"><label class="field__label">Почивка от</label><input id="schBreakStart" type="time"
+          class="field__input"></div>
+      <div class="field"><label class="field__label">Почивка до</label><input id="schBreakEnd" type="time"
+          class="field__input"></div>
+    </div>
+
+    <button class="btn btn--primary" onclick="saveProviderSchedule()">Запази график</button>
+
+    <hr style="margin:20px 0; border-color: var(--border);">
+
+    <h3 style="margin-bottom:10px;">Отпуски / болнични</h3>
+    <div id="absenceList"></div>
+
+    <div class="field" style="margin-top:14px;">
+      <label class="field__label">Причина</label>
+      <div class="chip-picker" id="absReasonPicker">
+        <button type="button" class="chip active" data-reason="Отпуск">Отпуск</button>
+        <button type="button" class="chip" data-reason="Болничен">Болничен</button>
+        <button type="button" class="chip" data-reason="Почивен ден">Почивен ден</button>
+        <button type="button" class="chip" data-reason="Друго">Друго</button>
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-top:10px;">
+      <div class="field"><label class="field__label">От дата</label><input id="absStart" type="date"
+          class="field__input"></div>
+      <div class="field"><label class="field__label">До дата</label><input id="absEnd" type="date" class="field__input"
+          placeholder="По избор"></div>
+    </div>
+
+    <label class="toggle-row">
+      <input type="checkbox" id="absPartialToggle">
+      <span class="toggle-switch"></span>
+      <span>Само част от деня (по час)</span>
+    </label>
+
+    <div class="form-grid toggle-section hidden" id="absPartialFields">
+      <div class="field"><label class="field__label">От час</label><input id="absFrom" type="time" class="field__input">
+      </div>
+      <div class="field"><label class="field__label">До час</label><input id="absTo" type="time" class="field__input">
+      </div>
+    </div>
+
+    <button class="btn btn--primary" onclick="addProviderAbsence()">Добави отсъствие</button>
+    <button class="btn" style="margin-top:10px;" onclick="closeScheduleModal()">Затвори</button>
+  </div>
+</div>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">SMS Логове</h2>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input id="smsPhoneFilter" class="field__input" placeholder="Търси по телефон" style="width:160px;">
+      <select id="smsSuccessFilter" class="field__input" style="width:130px;">
+        <option value="">Всички</option>
+        <option value="true">Успешни</option>
+        <option value="false">Неуспешни</option>
+      </select>
+      <button class="btn btn--primary" onclick="loadSmsLogs(1)">Филтрирай</button>
+      <button class="btn btn--logout" onclick="deleteAllSmsLogs()">🗑 Изтрий филтрираните</button>
     </div>
   </div>
-
-  <div id="scheduleModal" class="modal hidden">
-    <div class="modal-content" style="max-width:480px; text-align:left; max-height:85vh; overflow-y:auto;">
-      <h2>График — <span id="scheduleProviderName"></span></h2>
-
-      <div class="field" style="margin-top:16px;">
-        <label class="field__label">Работни дни</label>
-        <div class="day-picker" id="schWorkingDaysPicker">
-          <button type="button" class="day-btn" data-day="1">Пон</button>
-          <button type="button" class="day-btn" data-day="2">Вто</button>
-          <button type="button" class="day-btn" data-day="3">Сря</button>
-          <button type="button" class="day-btn" data-day="4">Чет</button>
-          <button type="button" class="day-btn" data-day="5">Пет</button>
-          <button type="button" class="day-btn" data-day="6">Съб</button>
-          <button type="button" class="day-btn" data-day="7">Нед</button>
-        </div>
-      </div>
-
-      <div class="form-grid" style="margin-top:14px;">
-        <div class="field"><label class="field__label">Начало</label><input id="schStart" type="time"
-            class="field__input"></div>
-        <div class="field"><label class="field__label">Край</label><input id="schEnd" type="time" class="field__input">
-        </div>
-      </div>
-
-      <label class="toggle-row">
-        <input type="checkbox" id="schBreakToggle">
-        <span class="toggle-switch"></span>
-        <span>Почивка през деня</span>
-      </label>
-
-      <div class="form-grid toggle-section hidden" id="schBreakFields">
-        <div class="field"><label class="field__label">Почивка от</label><input id="schBreakStart" type="time"
-            class="field__input"></div>
-        <div class="field"><label class="field__label">Почивка до</label><input id="schBreakEnd" type="time"
-            class="field__input"></div>
-      </div>
-
-      <button class="btn btn--primary" onclick="saveProviderSchedule()">Запази график</button>
-
-      <hr style="margin:20px 0; border-color: var(--border);">
-
-      <h3 style="margin-bottom:10px;">Отпуски / болнични</h3>
-      <div id="absenceList"></div>
-
-      <div class="field" style="margin-top:14px;">
-        <label class="field__label">Причина</label>
-        <div class="chip-picker" id="absReasonPicker">
-          <button type="button" class="chip active" data-reason="Отпуск">Отпуск</button>
-          <button type="button" class="chip" data-reason="Болничен">Болничен</button>
-          <button type="button" class="chip" data-reason="Почивен ден">Почивен ден</button>
-          <button type="button" class="chip" data-reason="Друго">Друго</button>
-        </div>
-      </div>
-
-      <div class="form-grid" style="margin-top:10px;">
-        <div class="field"><label class="field__label">От дата</label><input id="absStart" type="date"
-            class="field__input"></div>
-        <div class="field"><label class="field__label">До дата</label><input id="absEnd" type="date"
-            class="field__input" placeholder="По избор"></div>
-      </div>
-
-      <label class="toggle-row">
-        <input type="checkbox" id="absPartialToggle">
-        <span class="toggle-switch"></span>
-        <span>Само част от деня (по час)</span>
-      </label>
-
-      <div class="form-grid toggle-section hidden" id="absPartialFields">
-        <div class="field"><label class="field__label">От час</label><input id="absFrom" type="time"
-            class="field__input"></div>
-        <div class="field"><label class="field__label">До час</label><input id="absTo" type="time" class="field__input">
-        </div>
-      </div>
-
-      <button class="btn btn--primary" onclick="addProviderAbsence()">Добави отсъствие</button>
-      <button class="btn" style="margin-top:10px;" onclick="closeScheduleModal()">Затвори</button>
-    </div>
+  <div id="smsLogs"></div>
+  <div id="smsPagination" style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:14px;">
   </div>
-
-  <section class="section">
-    <div class="section__header">
-      <h2 class="section__title">SMS Логове</h2>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <input id="smsPhoneFilter" class="field__input" placeholder="Търси по телефон" style="width:160px;">
-        <select id="smsSuccessFilter" class="field__input" style="width:130px;">
-          <option value="">Всички</option>
-          <option value="true">Успешни</option>
-          <option value="false">Неуспешни</option>
-        </select>
-        <button class="btn btn--primary" onclick="loadSmsLogs(1)">Филтрирай</button>
-        <button class="btn btn--logout" onclick="deleteAllSmsLogs()">🗑 Изтрий филтрираните</button>
-      </div>
-    </div>
-    <div id="smsLogs"></div>
-    <div id="smsPagination"
-      style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:14px;"></div>
-  </section>
+</section>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='scripts/admin.js') }}"></script>
+<script
+  src="{{ url_for('static', filename='scripts/provider.js') }}?v={{ asset_version('scripts/provider.js') }}"></script>
 {% endblock %}

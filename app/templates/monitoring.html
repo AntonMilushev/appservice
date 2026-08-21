@@ -24,37 +24,38 @@
     </div>
 </header>
 
-    <section class="section">
-        <div class="section__header">
-            <h2 class="section__title">Резервации днес</h2>
-        </div>
-        <div id="bookingStats" class="providers-grid"></div>
-    </section>
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Резервации днес</h2>
+    </div>
+    <div id="bookingStats" class="providers-grid"></div>
+</section>
 
-    <section class="section">
-        <div class="section__header">
-            <h2 class="section__title">SMS (последните 24ч)</h2>
-        </div>
-        <div id="smsStats"></div>
-        <div id="smsFailures" style="margin-top:14px;"></div>
-    </section>
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">SMS (последните 24ч)</h2>
+    </div>
+    <div id="smsStats"></div>
+    <div id="smsFailures" style="margin-top:14px;"></div>
+</section>
 
-    <section class="section">
-        <div class="section__header">
-            <h2 class="section__title">Email (последните 24ч)</h2>
-        </div>
-        <div id="emailStats"></div>
-        <div id="emailFailures" style="margin-top:14px;"></div>
-    </section>
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Email (последните 24ч)</h2>
+    </div>
+    <div id="emailStats"></div>
+    <div id="emailFailures" style="margin-top:14px;"></div>
+</section>
 
-    <section class="section">
-        <div class="section__header">
-            <h2 class="section__title">Последна активност</h2>
-        </div>
-        <div id="activityLog"></div>
-    </section>
+<section class="section">
+    <div class="section__header">
+        <h2 class="section__title">Последна активност</h2>
+    </div>
+    <div id="activityLog"></div>
+</section>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='scripts/monitoring.js') }}"></script>
+<script
+    src="{{ url_for('static', filename='scripts/provider.js') }}?v={{ asset_version('scripts/provider.js') }}"></script>
 {% endblock %}
