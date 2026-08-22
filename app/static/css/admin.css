@@ -849,6 +849,13 @@ button.delete:hover {
     padding: 24px 28px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
 }
+
 /* Jinja theme shell overrides */
-.page-admin { background: var(--paper); color: var(--ink); }
-.page-admin .app-topbar + .section { margin-top: 0; }
+.page-admin {
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.page-admin .app-topbar+.section {
+    margin-top: 0;
+}

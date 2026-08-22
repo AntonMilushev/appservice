@@ -13,128 +13,121 @@
 
 {% block content %}
 <!-- ═══ NAV ═══ -->
-    <nav class="nav" id="nav">
-        <div class="nav__inner">
-            <!-- ✏️ EDIT: марка/лого -->
-            <button class="nav__brand" onclick="goHome()">
-                <span class="nav__mark">PA</span>
-                <span>Provider App</span>
-            </button>
+<nav class="nav" id="nav">
+    <div class="nav__inner">
+        <!-- ✏️ EDIT: марка/лого -->
+        <button class="nav__brand" onclick="goHome()">
+            <span class="nav__mark">PA</span>
+            <span>Provider App</span>
+        </button>
 
-            <ul class="nav__links">
-                <li><a href="#how">Как работи</a></li>
-                <li><a href="#footer">Контакти</a></li>
-            </ul>
+        <ul class="nav__links">
+            <li><a href="#how">Как работи</a></li>
+            <li><a href="#footer">Контакти</a></li>
+        </ul>
 
-            <button class="nav__cta" onclick="goToBooking()">Запази час</button>
+        <button class="nav__cta" onclick="goToBooking()">Запази час</button>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+    <div>
+        <p class="eyebrow hero__eyebrow">ОНЛАЙН РЕЗЕРВАЦИИ · ЗА СЕКУНДИ</p>
+
+        <!-- ✏️ EDIT: главно послание -->
+        <h1>Запази <em>своя</em><br>час.</h1>
+
+        <p class="hero__sub">
+            Избери специалист, услуга и удобно за теб време —
+            билетът ти се попълва в движение и се потвърждава веднага.
+        </p>
+
+        <div class="hero__actions">
+            <button class="btn-primary" onclick="goToBooking()">Избери специалист →</button>
+            <span class="hero__meta">
+                {% if providers|length == 1 %}1 специалист наличен{% else %}{{ providers|length }} специалисти
+                налични{% endif %}
+            </span>
         </div>
-    </nav>
+    </div>
 
-    <!-- ═══ HERO ═══ -->
-    <header class="hero">
-        <div>
-            <p class="eyebrow hero__eyebrow">ОНЛАЙН РЕЗЕРВАЦИИ · ЗА СЕКУНДИ</p>
 
-            <!-- ✏️ EDIT: главно послание -->
-            <h1>Запази <em>своя</em><br>час.</h1>
+</header>
 
-            <p class="hero__sub">
-                Избери специалист, услуга и удобно за теб време —
-                билетът ти се попълва в движение и се потвърждава веднага.
-            </p>
+<!-- ═══ BOOKING ═══ -->
+<main class="booking" id="how">
 
-            <div class="hero__actions">
-                <button class="btn-primary" onclick="goToBooking()">Избери специалист →</button>
-                <span class="hero__meta">
-                    {% if providers|length == 1 %}1 специалист наличен{% else %}{{ providers|length }} специалисти
-                    налични{% endif %}
-                </span>
+    <div class="steps">
+
+        <!-- 01 SPECIALIST -->
+        <section id="providersSection">
+            <div class="step__head">
+                <span class="step__num">01</span>
+                <h2 class="step__title">Специалист</h2>
             </div>
-        </div>
 
-        <div class="hero__stub" aria-hidden="true">
-            <div class="hero__stub-row"><span>СПЕЦИАЛИСТ</span><b>—</b></div>
-            <div class="hero__stub-row"><span>УСЛУГА</span><b>—</b></div>
-            <div class="hero__stub-row"><span>ДАТА · ЧАС</span><b>—</b></div>
-        </div>
-    </header>
-
-    <!-- ═══ BOOKING ═══ -->
-    <main class="booking" id="how">
-
-        <div class="steps">
-
-            <!-- 01 SPECIALIST -->
-            <section id="providersSection">
-                <div class="step__head">
-                    <span class="step__num">01</span>
-                    <h2 class="step__title">Специалист</h2>
+            <div class="providers">
+                {% for p in providers %}
+                <div class="provider-card" onclick="selectProvider(event, {{ p.id }})">
+                    <img src="{{ p.image if p.image else url_for('static', filename='default.png') }}"
+                        alt="{{ p.name }}">
+                    <p class="provider-name">{{ p.name }}</p>
                 </div>
+                {% endfor %}
+            </div>
+        </section>
 
-                <div class="providers">
-                    {% for p in providers %}
-                    <div class="provider-card" onclick="selectProvider(event, {{ p.id }})">
-                        <img src="{{ p.image if p.image else url_for('static', filename='default.png') }}"
-                            alt="{{ p.name }}">
-                        <p class="provider-name">{{ p.name }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </section>
+        <!-- 02 SERVICE -->
+        <section>
+            <div class="step__head">
+                <span class="step__num">02</span>
+                <h2 class="step__title">Услуга</h2>
+            </div>
 
-            <!-- 02 SERVICE -->
-            <section>
-                <div class="step__head">
-                    <span class="step__num">02</span>
-                    <h2 class="step__title">Услуга</h2>
-                </div>
+            <div class="services" id="services">
+                <p class="services-placeholder">Първо избери специалист</p>
+            </div>
+            <input type="hidden" id="service">
+        </section>
 
-                <div class="services" id="services">
-                    <p class="services-placeholder">Първо избери специалист</p>
-                </div>
-                <input type="hidden" id="service">
-            </section>
+        <!-- 03 DATE + TIME -->
+        <section>
+            <div class="step__head">
+                <span class="step__num">03</span>
+                <h2 class="step__title">Дата и час</h2>
+            </div>
 
-            <!-- 03 DATE + TIME -->
-            <section>
-                <div class="step__head">
-                    <span class="step__num">03</span>
-                    <h2 class="step__title">Дата и час</h2>
-                </div>
+            <input type="date" id="date" placeholder="Избери дата">
 
-                <input type="date" id="date" placeholder="Избери дата">
+            <div id="slots" class="slots-grid"></div>
+            <input type="hidden" id="selectedTime">
+        </section>
 
-                <div id="slots" class="slots-grid"></div>
-                <input type="hidden" id="selectedTime">
-            </section>
+        <!-- 04 DETAILS -->
+        <section>
+            <div class="step__head">
+                <span class="step__num">04</span>
+                <h2 class="step__title">Данни за връзка</h2>
+            </div>
 
-            <!-- 04 DETAILS -->
-            <section>
-                <div class="step__head">
-                    <span class="step__num">04</span>
-                    <h2 class="step__title">Данни за връзка</h2>
-                </div>
+            <div class="form-fields">
+                <input id="name" placeholder="Име">
+                <input id="phone" placeholder="Телефон">
+                <input id="email" placeholder="Email (по избор)">
 
-                <div class="form-fields">
-                    <input id="name" placeholder="Име">
-                    <input id="phone" placeholder="Телефон">
-                    <input id="email" placeholder="Email (по избор)">
-
-                    <label class="consent-row">
-                        <input type="checkbox" id="consent">
-                        <span class="consent-box"></span>
-                        <span class="consent-text">
-                            Съгласен съм личните ми данни да бъдат обработвани съгласно
-                            <a href="/privacy-policy" target="_blank">Политиката за поверителност</a>
-                        </span>
-                    </label>
-                </div>
-            </section>
-
-        </div>
-
+                <label class="consent-row">
+                    <input type="checkbox" id="consent">
+                    <span class="consent-box"></span>
+                    <span class="consent-text">
+                        Съгласен съм личните ми данни да бъдат обработвани съгласно
+                        <a href="/privacy-policy" target="_blank">Политиката за поверителност</a>
+                    </span>
+                </label>
+            </div>
+        </section>
         <!-- 🎫 TICKET RAIL -->
-        <aside class="ticket-rail">
+        <aside class="ticket-rail hidden" id="ticketRail">
             <div class="ticket" id="ticket">
                 <div class="ticket__head">
                     <span class="eyebrow">Твоят билет</span>
@@ -180,18 +173,22 @@
             </div>
         </aside>
 
-    </main>
+    </div>
 
-    <!-- ═══ FOOTER ═══ -->
-    <footer class="footer" id="footer">
-        <div class="footer__inner">
-            <!-- ✏️ EDIT: контакти -->
-            <span>Provider App © {{ today.year }}</span>
-            <a href="/privacy-policy">Политика за поверителност</a>
-        </div>
-    </footer>
 
-    <div class="toast" id="toast"></div>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer" id="footer">
+    <div class="footer__inner">
+        <!-- ✏️ EDIT: контакти -->
+        <span>Provider App © {{ today.year }}</span>
+        <a href="/privacy-policy">Политика за поверителност</a>
+    </div>
+</footer>
+
+<div class="toast" id="toast"></div>
 {% endblock %}
 
 {% block scripts %}

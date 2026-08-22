@@ -203,13 +203,9 @@ select:focus {
    ═══════════════════════════════════════════════════ */
 
 .hero {
-    max-width: 1180px;
+    max-width: 780px;
     margin: 0 auto;
     padding: 76px 24px 64px;
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 48px;
-    align-items: center;
 }
 
 .hero__eyebrow {
@@ -300,31 +296,16 @@ select:focus {
     font-weight: 500;
 }
 
-@media (max-width: 900px) {
-    .hero {
-        grid-template-columns: 1fr;
-        padding-top: 48px;
-    }
 
-    .hero__stub {
-        justify-self: center;
-        transform: rotate(1.5deg);
-        margin-top: 12px;
-    }
-}
 
 /* ═══════════════════════════════════════════════════
    SECTION SHELL / STEPS
    ═══════════════════════════════════════════════════ */
 
 .booking {
-    max-width: 1180px;
+    max-width: 680px;
     margin: 0 auto;
     padding: 20px 24px 100px;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 40px;
-    align-items: start;
 }
 
 .steps {
@@ -567,8 +548,7 @@ select:focus {
    ═══════════════════════════════════════════════════ */
 
 .ticket-rail {
-    position: sticky;
-    top: calc(var(--nav-h) + 20px);
+    margin-top: 40px;
 }
 
 .ticket {
@@ -784,17 +764,7 @@ select:focus {
     display: none;
 }
 
-@media (max-width: 900px) {
-    .booking {
-        grid-template-columns: 1fr;
-    }
 
-    .ticket-rail {
-        position: static;
-        order: -1;
-        margin-bottom: 8px;
-    }
-}
 
 /* ═══════════════════════════════════════════════════
    TOAST
