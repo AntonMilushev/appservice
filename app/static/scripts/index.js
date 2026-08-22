@@ -35,6 +35,19 @@ function updateTicket() {
         selectedServicePrice !== null && selectedServicePrice !== undefined
             ? `${selectedServicePrice} лв.`
             : "—";
+
+    // 🎫 показваме билета едва когато е избран специалист + услуга + час
+    const service = document.getElementById("service").value;
+    const ready = !!(selectedProvider && service && time);
+
+    const rail = document.getElementById("ticketRail");
+    if (rail) {
+        rail.classList.toggle("hidden", !ready);
+
+        if (ready) {
+            rail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+    }
 }
 
 
@@ -245,41 +258,6 @@ function book() {
         });
 }
 
-function updateTicket() {
-    document.getElementById("ticketProvider").textContent = selectedProviderName || "—";
-    document.getElementById("ticketProvider").classList.toggle("muted", !selectedProviderName);
-
-    document.getElementById("ticketService").textContent = selectedServiceName || "—";
-    document.getElementById("ticketService").classList.toggle("muted", !selectedServiceName);
-
-    document.getElementById("ticketDate").textContent = selectedDateFormatted || "—";
-    document.getElementById("ticketDate").classList.toggle("muted", !selectedDateFormatted);
-
-    const time = document.getElementById("selectedTime").value;
-    document.getElementById("ticketTime").textContent = time
-        ? `${time}${selectedServiceDuration ? " · " + selectedServiceDuration + " мин" : ""}`
-        : "—";
-    document.getElementById("ticketTime").classList.toggle("muted", !time);
-
-    document.getElementById("ticketPrice").textContent =
-        selectedServicePrice !== null && selectedServicePrice !== undefined
-            ? `${selectedServicePrice} лв.`
-            : "—";
-
-    // 🎫 показваме билета едва когато е избран специалист + услуга + час (=> дата)
-    const service = document.getElementById("service").value;
-    const ready = !!(selectedProvider && service && time);
-
-    const rail = document.getElementById("ticketRail");
-    if (rail) {
-        rail.classList.toggle("hidden", !ready);
-
-        if (ready) {
-            rail.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-    }
-}
-
 function confirmTicket(bookingId) {
     const ticket = document.getElementById("ticket");
     ticket.classList.add("confirmed");
@@ -331,6 +309,7 @@ function showToast(message, type = "success") {
 /* =========================================================
    DATE PICKER (Flatpickr)
    ========================================================= */
+
 function setSelectedDateFromDate(d) {
     if (!d) return;
 
